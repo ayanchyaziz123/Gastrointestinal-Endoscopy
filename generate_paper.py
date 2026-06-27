@@ -176,8 +176,8 @@ body(
 body(
     "We map 23 HyperKvasir classes to four clinically actionable risk tiers — Normal (routine "
     "surveillance), Inflammatory (medical management), Pre-malignant (biopsy required), and "
-    "High-Risk (immediate intervention) — and train four deep learning architectures "
-    "(DenseNet-121, EfficientNet-B4, ViT-B/16, Swin-T) under a novel Asymmetric Endoscopy "
+    "High-Risk (immediate intervention) — and train three deep learning architectures "
+    "(DenseNet-121, EfficientNet-B4, Swin-T) under a novel Asymmetric Endoscopy "
     "Loss (AEL) that assigns a 5× misclassification penalty to the High-Risk class, reflecting "
     "the clinical reality that missed High-Risk lesions reduce five-year survival from 90% to "
     "under 20%. CLAHE preprocessing enhances mucosal texture and vascular architecture prior "
@@ -252,7 +252,7 @@ body(
     "(2) a novel Asymmetric Endoscopy Loss (AEL) that encodes clinical cost asymmetry through "
     "class-specific misclassification weights derived from guideline-mandated intervention "
     "urgency; (3) the first systematic CNN-vs-Transformer benchmark (DenseNet-121, "
-    "EfficientNet-B4, ViT-B/16, Swin-T) on this four-class task; (4) cross-dataset "
+    "EfficientNet-B4, Swin-T) on this four-class task; (4) cross-dataset "
     "generalisation evaluation on an independent Kvasir-v2 cohort; (5) GradCAM explainability "
     "localising clinically meaningful features per risk tier; (6) Monte Carlo Dropout "
     "uncertainty quantification with a risk-adaptive referral protocol; (7) an AEL ablation "
@@ -411,8 +411,8 @@ body(
 
 h2("3.4 Model Architectures")
 body(
-    "We benchmark four architectures representing two computational paradigms: convolutional "
-    "networks (DenseNet-121, EfficientNet-B4) and Vision Transformers (ViT-B/16, Swin-T). "
+    "We benchmark three architectures representing two computational paradigms: convolutional "
+    "networks (DenseNet-121, EfficientNet-B4) and the Swin Transformer (Swin-T). "
     "All models are pre-trained on ImageNet and fine-tuned with task-specific classification "
     "heads. This paired design enables direct comparison of inductive bias (local vs. global "
     "receptive field) under identical training conditions."
@@ -423,18 +423,18 @@ body(
     "Its 7M-parameter footprint makes it computationally efficient for deployment on "
     "resource-constrained endoscopy systems. EfficientNet-B4 (Tan & Le, 2019) uses compound "
     "scaling of depth, width, and resolution, achieving strong performance per parameter "
-    "(19M parameters). ViT-B/16 (Dosovitskiy et al., 2020) partitions the input image into "
-    "16×16 non-overlapping patches and models global patch relationships via multi-head "
-    "self-attention, with 86M parameters pre-trained on ImageNet-21k. Swin-T (Liu et al., "
-    "2021) introduces hierarchical attention within non-overlapping local windows with "
-    "cross-window connectivity via shifted windows, providing multi-scale spatial "
-    "representations with 28M parameters."
+    "(19M parameters). Swin-T (Liu et al., 2021) introduces hierarchical attention within "
+    "non-overlapping local windows with cross-window connectivity via shifted windows, "
+    "providing multi-scale spatial representations with 28M parameters. ViT-B/16 "
+    "(Dosovitskiy et al., 2020) was considered but excluded from the primary benchmark "
+    "due to its 86M parameter count requiring GPU-class training infrastructure beyond "
+    "the scope of this study; it remains a direction for future work."
 )
 body(
     "Classification heads: DenseNet-121 replaces the final fully connected layer with "
     "Dropout(0.5) → Linear(1024→4). EfficientNet-B4 uses Dropout(0.4) → Linear(1792→256) "
-    "→ ReLU → Dropout(0.2) → Linear(256→4). ViT-B/16 uses Dropout(0.1) → Linear(768→4). "
-    "Swin-T uses Dropout(0.2) → Linear(768→4). Dropout rates are calibrated to model "
+    "→ ReLU → Dropout(0.2) → Linear(256→4). Swin-T uses Dropout(0.2) → Linear(768→4). "
+    "Dropout rates are calibrated to model "
     "capacity: deeper CNNs require stronger regularisation; Transformers overfit less with "
     "heavy dropout due to their inherent attention-based regularisation."
 )
@@ -444,7 +444,6 @@ add_table(
     [
         ["DenseNet-121", "CNN", "ImageNet-1k", "7.0M", "224×224", "0.5"],
         ["EfficientNet-B4", "CNN", "ImageNet-1k", "19.0M", "224×224", "0.4"],
-        ["ViT-B/16", "Transformer", "ImageNet-21k", "86.6M", "224×224", "0.1"],
         ["Swin-T", "Transformer", "ImageNet-1k", "28.3M", "224×224", "0.2"],
     ],
     tbl_caption="Table 2. Model architectures benchmarked in this study."
@@ -500,7 +499,7 @@ add_table(
         ["Normal class cap", "3,000 images"],
         ["Random seed", "42"],
     ],
-    tbl_caption="Table 3. Training hyperparameters (identical for all four models)."
+    tbl_caption="Table 3. Training hyperparameters (identical for all three models)."
 )
 
 h2("3.7 Dataset Splits")
@@ -529,7 +528,7 @@ h2("3.8 GradCAM Explainability")
 body(
     "Gradient-weighted Class Activation Mapping (GradCAM; Selvaraju et al., 2017) is applied "
     "to the final convolutional layer (DenseNet-121, EfficientNet-B4) and the final attention "
-    "layer norm (ViT-B/16, Swin-T) to produce class-discriminative saliency maps. For CNN "
+    "layer norm (Swin-T) to produce class-discriminative saliency maps. For CNN "
     "architectures, GradCAM weights channel-wise feature maps by the mean gradient of the "
     "target class score with respect to that feature map, followed by ReLU activation. For "
     "Transformer architectures, the token sequence is reshaped to a 2D spatial grid after "
@@ -603,15 +602,15 @@ body(
 )
 
 add_table(
-    ["Metric", "DenseNet-121", "EfficientNet-B4", "ViT-B/16", "Swin-T"],
+    ["Metric", "DenseNet-121", "EfficientNet-B4", "Swin-T"],
     [
-        ["F1 — Normal (0)",        "[TBD]", "[TBD]", "[TBD]", "[TBD]"],
-        ["F1 — Inflammatory (1)",  "[TBD]", "[TBD]", "[TBD]", "[TBD]"],
-        ["F1 — Pre-malignant (2)", "[TBD]", "[TBD]", "[TBD]", "[TBD]"],
-        ["F1 — High-Risk (3)",     "[TBD]", "[TBD]", "[TBD]", "[TBD]"],
-        ["Macro F1",               "[TBD]", "[TBD]", "[TBD]", "[TBD]"],
-        ["High-Risk Recall",       "[TBD]", "[TBD]", "[TBD]", "[TBD]"],
-        ["Macro AUC (OvR)",        "[TBD]", "[TBD]", "[TBD]", "[TBD]"],
+        ["F1 — Normal (0)",        "[TBD]", "[TBD]", "[TBD]"],
+        ["F1 — Inflammatory (1)",  "[TBD]", "[TBD]", "[TBD]"],
+        ["F1 — Pre-malignant (2)", "[TBD]", "[TBD]", "[TBD]"],
+        ["F1 — High-Risk (3)",     "[TBD]", "[TBD]", "[TBD]"],
+        ["Macro F1",               "[TBD]", "[TBD]", "[TBD]"],
+        ["High-Risk Recall",       "[TBD]", "[TBD]", "[TBD]"],
+        ["Macro AUC (OvR)",        "[TBD]", "[TBD]", "[TBD]"],
     ],
     tbl_caption="Table 5. Per-class F1 and summary metrics — HyperKvasir test set (N≈1,145)."
 )
@@ -629,9 +628,9 @@ body(
 add_table(
     ["Loss Function", "Macro F1", "High-Risk F1", "High-Risk Recall", "High-Risk Precision"],
     [
-        ["Cross-Entropy (baseline)", "[TBD]", "[TBD]", "[TBD]", "[TBD]"],
-        ["Focal Loss (γ=2.0)",       "[TBD]", "[TBD]", "[TBD]", "[TBD]"],
-        ["AEL (Ours, w=[1,2,3,5])", "[TBD]", "[TBD]", "[TBD]", "[TBD]"],
+        ["Cross-Entropy (baseline)", "[TBD]", "[TBD]", "[TBD]"],
+        ["Focal Loss (γ=2.0)",       "[TBD]", "[TBD]", "[TBD]"],
+        ["AEL (Ours, w=[1,2,3,5])", "[TBD]", "[TBD]", "[TBD]"],
     ],
     tbl_caption="Table 6. AEL ablation study on DenseNet-121 (10-epoch training)."
 )
@@ -648,7 +647,6 @@ add_table(
     [
         ["DenseNet-121",     "[TBD]", "[TBD]", "[TBD]"],
         ["EfficientNet-B4",  "[TBD]", "[TBD]", "[TBD]"],
-        ["ViT-B/16",         "[TBD]", "[TBD]", "[TBD]"],
         ["Swin-T",           "[TBD]", "[TBD]", "[TBD]"],
     ],
     tbl_caption="Table 7. Cross-dataset generalisation — macro F1 (train: HyperKvasir → evaluate: Kvasir-v2)."
@@ -665,11 +663,11 @@ body(
 )
 
 add_table(
-    ["Metric", "Best Model", "DenseNet-121", "EfficientNet-B4", "ViT-B/16", "Swin-T"],
+    ["Metric", "Best Model", "DenseNet-121", "EfficientNet-B4", "Swin-T"],
     [
-        ["AI Auto-cleared (%)",       "[TBD]", "[TBD]", "[TBD]", "[TBD]", "[TBD]"],
-        ["Flagged for Review (%)",    "[TBD]", "[TBD]", "[TBD]", "[TBD]", "[TBD]"],
-        ["Missed High-Risk (n)",      "0",     "[TBD]", "[TBD]", "[TBD]", "[TBD]"],
+        ["AI Auto-cleared (%)",       "[TBD]", "[TBD]", "[TBD]", "[TBD]"],
+        ["Flagged for Review (%)",    "[TBD]", "[TBD]", "[TBD]", "[TBD]"],
+        ["Missed High-Risk (n)",      "0",     "[TBD]", "[TBD]", "[TBD]"],
         ["Confidence Threshold",      "0.75",  "0.75",  "0.75",  "0.75",  "0.75"],
     ],
     tbl_caption="Table 8. Endoscopist workload simulation results (test set, threshold=0.75)."
@@ -677,7 +675,7 @@ add_table(
 
 h2("4.6 GradCAM Qualitative Analysis")
 body(
-    "GradCAM visualisations demonstrate that all four architectures attend to clinically "
+    "GradCAM visualisations demonstrate that all three architectures attend to clinically "
     "meaningful anatomical regions. For Normal class images, attention is diffuse across "
     "the mucosal surface, consistent with the absence of focal pathology. For Inflammatory "
     "lesions, GradCAM highlights areas of mucosal erythema, oedema, and granularity — "
@@ -688,8 +686,8 @@ body(
     "post-interventional changes (dyed-lifted-polyps margins, resection boundaries) where "
     "completeness of resection is the critical clinical question. CNN architectures "
     "(DenseNet-121, EfficientNet-B4) produce sharper, more spatially localised heatmaps, "
-    "while Transformer architectures (ViT-B/16, Swin-T) show broader, patch-level "
-    "attention patterns that may better capture global mucosal context."
+    "while Swin-T shows broader, patch-level attention patterns that may better capture "
+    "global mucosal context."
 )
 
 h2("4.7 Uncertainty Quantification")
@@ -714,10 +712,9 @@ body(
 add_table(
     ["Model", "CD-CTEI (Age)", "CD-CTEI (Sex)", "Worst Subgroup F1", "Meets ≥0.95?"],
     [
-        ["DenseNet-121",    "[TBD]", "[TBD]", "[TBD]", "[TBD]"],
-        ["EfficientNet-B4", "[TBD]", "[TBD]", "[TBD]", "[TBD]"],
-        ["ViT-B/16",        "[TBD]", "[TBD]", "[TBD]", "[TBD]"],
-        ["Swin-T",          "[TBD]", "[TBD]", "[TBD]", "[TBD]"],
+        ["DenseNet-121",    "[TBD]", "[TBD]", "[TBD]"],
+        ["EfficientNet-B4", "[TBD]", "[TBD]", "[TBD]"],
+        ["Swin-T",          "[TBD]", "[TBD]", "[TBD]"],
     ],
     tbl_caption="Table 9. Demographic equity analysis — CD-CTEI across age and sex subgroups."
 )
@@ -750,12 +747,13 @@ body(
     "The CNN-vs-Transformer comparison provides important insights for medical AI system "
     "design. CNNs (DenseNet-121, EfficientNet-B4) benefit from translation invariance "
     "and hierarchical local feature extraction that aligns well with mucosal texture "
-    "analysis. Transformers (ViT-B/16, Swin-T) capture global image context through "
+    "analysis. Swin-T captures global image context through hierarchical shifted-window "
     "self-attention, which may be advantageous for lesions defined by their spatial "
     "relationship to surrounding tissue rather than intrinsic local texture features. "
-    "The practical implication for deployment differs: DenseNet-121's 7M parameter "
+    "The practical implication for deployment: DenseNet-121's 7M parameter "
     "footprint makes it deployable on resource-constrained endoscopy workstations, "
-    "while ViT-B/16's 86M parameters require GPU inference infrastructure."
+    "while Swin-T's 28M parameters represent a reasonable trade-off between capacity "
+    "and inference speed on modern hardware."
 )
 body(
     "The Monte Carlo Dropout uncertainty framework provides a clinically interpretable "

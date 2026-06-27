@@ -30,7 +30,7 @@ This paper presents the **first CNN-vs-Transformer benchmark for four-class GI l
 
 1. **ACG/ESGE-aligned 4-class schema** — first AI benchmark trained on four clinically actionable risk tiers derived from published society guidelines
 2. **Asymmetric Endoscopy Loss (AEL)** — class weights `[1.0, 2.0, 3.0, 5.0]` encoding clinical cost asymmetry; reduces missed High-Risk lesion rate
-3. **CNN vs. Transformer benchmark** — DenseNet-121, EfficientNet-B4, ViT-B/16, Swin-T compared on identical task under identical training protocol
+3. **CNN vs. Transformer benchmark** — DenseNet-121, EfficientNet-B4, Swin-T compared on identical task under identical training protocol
 4. **Cross-dataset generalisation** — zero-shot evaluation on independent Kvasir-v2 cohort
 5. **GradCAM explainability** — localises mucosal pit patterns, vascular irregularities, and ulcerated margins per risk tier for both CNN and Transformer models
 6. **MC Dropout uncertainty** — 30 stochastic forward passes; flags Pre-malignant/High-Risk for mandatory endoscopist review
@@ -46,10 +46,11 @@ This paper presents the **first CNN-vs-Transformer benchmark for four-class GI l
 |---|---|---|---|---|
 | DenseNet-121 | CNN | ImageNet-1k | 7.0 M | 0.5 |
 | EfficientNet-B4 | CNN | ImageNet-1k | 19.0 M | 0.4 |
-| ViT-B/16 | Transformer | ImageNet-21k | 86.6 M | 0.1 |
 | Swin-T | Transformer | ImageNet-1k | 28.3 M | 0.2 |
 
 All models use AdamW (lr=2×10⁻⁴), CosineAnnealingLR, 25 epochs, batch size 32, WeightedRandomSampler for class balance, and CLAHE preprocessing.
+
+> **Note:** ViT-B/16 (86M params) is defined in the notebook but excluded from the benchmark — it requires GPU-class hardware. To include it, run on Google Colab (free T4).
 
 ---
 
@@ -79,7 +80,6 @@ GastroEndoscopy-Risk-Stratification/
 ├── checkpoints/
 │   ├── densenet121/best.pt
 │   ├── efficientnet_b4/best.pt
-│   ├── vit_b16/best.pt
 │   └── swin_t/best.pt
 └── data/
     ├── HyperKvasir/
@@ -108,12 +108,12 @@ GastroEndoscopy-Risk-Stratification/
 | 1 | Environment Setup | Imports, seeds, device, global constants |
 | 2 | Dataset Loading | HyperKvasir loading, 4-class mapping, train/val/test split |
 | 3 | Data Augmentation & DataLoader | CLAHE, transforms, WeightedRandomSampler |
-| 4 | Model Architecture | DenseNet-121, EfficientNet-B4, ViT-B/16, Swin-T builders + sanity check |
+| 4 | Model Architecture | DenseNet-121, EfficientNet-B4, ViT-B/16, Swin-T builders (ViT skipped in training) |
 | 5 | Asymmetric Endoscopy Loss | AEL definition with clinical weight rationale |
-| 6 | Training | `run_training()` for all 4 models + training curve plots |
+| 6 | Training | `run_training()` for DenseNet-121, EfficientNet-B4, Swin-T + curve plots |
 | 7 | AEL Ablation Study | AEL vs. Cross-Entropy vs. Focal Loss on DenseNet-121 |
 | 8 | Cross-Dataset Evaluation | Kvasir-v2 zero-shot evaluation + confusion matrices |
-| 9 | ROC-AUC Curves | Per-class one-vs-rest curves for all 4 models |
+| 9 | ROC-AUC Curves | Per-class one-vs-rest curves for all trained models |
 | 10 | GradCAM Explainability | Saliency maps per risk tier for CNN and Transformer models |
 | 11 | Monte Carlo Dropout | Uncertainty quantification + risk-adaptive referral protocol |
 | 12 | Workload Simulation | AI burden reduction analysis with threshold sweep |
@@ -198,7 +198,7 @@ where  w = [1.0, 2.0, 3.0, 5.0]
 
 | File | Description |
 |---|---|
-| `training_curves.png` | Loss and macro F1 curves for all 4 models |
+| `training_curves.png` | Loss and macro F1 curves for all trained models |
 | `confusion_matrix_<model>.png` | Count and normalised confusion matrices |
 | `roc_curves.png` | Per-class one-vs-rest ROC curves |
 | `gradcam_<model>.png` | GradCAM overlays per risk tier |
