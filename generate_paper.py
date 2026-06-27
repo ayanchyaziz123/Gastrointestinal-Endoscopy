@@ -177,7 +177,7 @@ body(
     "We map 23 HyperKvasir classes to four clinically actionable risk tiers — Normal (routine "
     "surveillance), Inflammatory (medical management), Pre-malignant (biopsy required), and "
     "High-Risk (immediate intervention) — and train three deep learning architectures "
-    "(DenseNet-121, EfficientNet-B4, Swin-T) under a novel Asymmetric Endoscopy "
+    "(DenseNet-121, EfficientNet-B0, DeiT-Tiny) under a novel Asymmetric Endoscopy "
     "Loss (AEL) that assigns a 5× misclassification penalty to the High-Risk class, reflecting "
     "the clinical reality that missed High-Risk lesions reduce five-year survival from 90% to "
     "under 20%. CLAHE preprocessing enhances mucosal texture and vascular architecture prior "
@@ -252,7 +252,7 @@ body(
     "(2) a novel Asymmetric Endoscopy Loss (AEL) that encodes clinical cost asymmetry through "
     "class-specific misclassification weights derived from guideline-mandated intervention "
     "urgency; (3) the first systematic CNN-vs-Transformer benchmark (DenseNet-121, "
-    "EfficientNet-B4, Swin-T) on this four-class task; (4) cross-dataset "
+    "EfficientNet-B0, DeiT-Tiny) on this four-class task; (4) cross-dataset "
     "generalisation evaluation on an independent Kvasir-v2 cohort; (5) GradCAM explainability "
     "localising clinically meaningful features per risk tier; (6) Monte Carlo Dropout "
     "uncertainty quantification with a risk-adaptive referral protocol; (7) an AEL ablation "
@@ -411,42 +411,42 @@ body(
 
 h2("3.4 Model Architectures")
 body(
-    "We benchmark three architectures representing two computational paradigms: convolutional "
-    "networks (DenseNet-121, EfficientNet-B4) and the Swin Transformer (Swin-T). "
-    "All models are pre-trained on ImageNet and fine-tuned with task-specific classification "
-    "heads. This paired design enables direct comparison of inductive bias (local vs. global "
-    "receptive field) under identical training conditions."
+    "We benchmark three lightweight architectures representing two computational paradigms: "
+    "convolutional networks (DenseNet-121, EfficientNet-B0) and a compact Vision Transformer "
+    "(DeiT-Tiny). All models are pre-trained on ImageNet, contain fewer than 8M parameters, "
+    "and are fine-tuned with task-specific classification heads. This design enables direct "
+    "comparison of inductive bias (local vs. global receptive field) while maintaining "
+    "real-time inference suitability for resource-constrained endoscopy hardware."
 )
 body(
     "DenseNet-121 (Huang et al., 2017) employs dense connectivity — each layer receives "
-    "feature maps from all preceding layers — promoting feature reuse and gradient flow. "
-    "Its 7M-parameter footprint makes it computationally efficient for deployment on "
-    "resource-constrained endoscopy systems. EfficientNet-B4 (Tan & Le, 2019) uses compound "
-    "scaling of depth, width, and resolution, achieving strong performance per parameter "
-    "(19M parameters). Swin-T (Liu et al., 2021) introduces hierarchical attention within "
-    "non-overlapping local windows with cross-window connectivity via shifted windows, "
-    "providing multi-scale spatial representations with 28M parameters. ViT-B/16 "
-    "(Dosovitskiy et al., 2020) was considered but excluded from the primary benchmark "
-    "due to its 86M parameter count requiring GPU-class training infrastructure beyond "
-    "the scope of this study; it remains a direction for future work."
+    "feature maps from all preceding layers — promoting feature reuse and gradient flow, "
+    "with 7M parameters. EfficientNet-B0 (Tan & Le, 2019) applies compound scaling of "
+    "depth, width, and resolution to achieve strong performance in a compact 5.3M parameter "
+    "footprint. DeiT-Tiny (Touvron et al., 2021) is a data-efficient Image Transformer "
+    "trained with distillation, containing 5.9M parameters and processing images as 14×14 "
+    "non-overlapping patch tokens via 12 self-attention layers. Larger variants (ViT-B/16: "
+    "86M, EfficientNet-B0: 19M, DeiT-Tiny: 28M) were considered but excluded due to "
+    "prohibitive training time on single-GPU endoscopy hardware; they remain directions "
+    "for future work."
 )
 body(
-    "Classification heads: DenseNet-121 replaces the final fully connected layer with "
-    "Dropout(0.5) → Linear(1024→4). EfficientNet-B4 uses Dropout(0.4) → Linear(1792→256) "
-    "→ ReLU → Dropout(0.2) → Linear(256→4). Swin-T uses Dropout(0.2) → Linear(768→4). "
-    "Dropout rates are calibrated to model "
-    "capacity: deeper CNNs require stronger regularisation; Transformers overfit less with "
-    "heavy dropout due to their inherent attention-based regularisation."
+    "Classification heads: DenseNet-121 replaces its final layer with Dropout(0.5) → "
+    "Linear(1024→4). EfficientNet-B0 uses Dropout(0.3) → Linear(1280→256) → ReLU → "
+    "Dropout(0.2) → Linear(256→4). DeiT-Tiny uses Dropout(0.1) → Linear(192→4). "
+    "Dropout rates are calibrated to model capacity: the dense CNN requires stronger "
+    "regularisation; the Transformer generalises with lighter dropout due to attention-based "
+    "implicit regularisation."
 )
 
 add_table(
     ["Model", "Type", "Pre-training", "Parameters", "Input Size", "Dropout"],
     [
-        ["DenseNet-121", "CNN", "ImageNet-1k", "7.0M", "224×224", "0.5"],
-        ["EfficientNet-B4", "CNN", "ImageNet-1k", "19.0M", "224×224", "0.4"],
-        ["Swin-T", "Transformer", "ImageNet-1k", "28.3M", "224×224", "0.2"],
+        ["DenseNet-121",   "CNN",         "ImageNet-1k", "7.0M",  "224×224", "0.5"],
+        ["EfficientNet-B0","CNN",         "ImageNet-1k", "5.3M",  "224×224", "0.3"],
+        ["DeiT-Tiny",      "Transformer", "ImageNet-1k", "5.9M",  "224×224", "0.1"],
     ],
-    tbl_caption="Table 2. Model architectures benchmarked in this study."
+    tbl_caption="Table 2. Lightweight model architectures benchmarked in this study (all <8M parameters)."
 )
 
 h2("3.5 Asymmetric Endoscopy Loss (AEL)")
@@ -527,8 +527,8 @@ note("Approximate values shown. Exact counts depend on final class mapping execu
 h2("3.8 GradCAM Explainability")
 body(
     "Gradient-weighted Class Activation Mapping (GradCAM; Selvaraju et al., 2017) is applied "
-    "to the final convolutional layer (DenseNet-121, EfficientNet-B4) and the final attention "
-    "layer norm (Swin-T) to produce class-discriminative saliency maps. For CNN "
+    "to the final convolutional layer (DenseNet-121, EfficientNet-B0) and the final attention "
+    "layer norm (DeiT-Tiny) to produce class-discriminative saliency maps. For CNN "
     "architectures, GradCAM weights channel-wise feature maps by the mean gradient of the "
     "target class score with respect to that feature map, followed by ReLU activation. For "
     "Transformer architectures, the token sequence is reshaped to a 2D spatial grid after "
@@ -602,7 +602,7 @@ body(
 )
 
 add_table(
-    ["Metric", "DenseNet-121", "EfficientNet-B4", "Swin-T"],
+    ["Metric", "DenseNet-121", "EfficientNet-B0", "DeiT-Tiny"],
     [
         ["F1 — Normal (0)",        "[TBD]", "[TBD]", "[TBD]"],
         ["F1 — Inflammatory (1)",  "[TBD]", "[TBD]", "[TBD]"],
@@ -646,8 +646,8 @@ add_table(
     ["Model", "HyperKvasir Test", "Kvasir-v2 (Zero-Shot)", "F1 Drop"],
     [
         ["DenseNet-121",     "[TBD]", "[TBD]", "[TBD]"],
-        ["EfficientNet-B4",  "[TBD]", "[TBD]", "[TBD]"],
-        ["Swin-T",           "[TBD]", "[TBD]", "[TBD]"],
+        ["EfficientNet-B0",  "[TBD]", "[TBD]", "[TBD]"],
+        ["DeiT-Tiny",           "[TBD]", "[TBD]", "[TBD]"],
     ],
     tbl_caption="Table 7. Cross-dataset generalisation — macro F1 (train: HyperKvasir → evaluate: Kvasir-v2)."
 )
@@ -663,7 +663,7 @@ body(
 )
 
 add_table(
-    ["Metric", "Best Model", "DenseNet-121", "EfficientNet-B4", "Swin-T"],
+    ["Metric", "Best Model", "DenseNet-121", "EfficientNet-B0", "DeiT-Tiny"],
     [
         ["AI Auto-cleared (%)",       "[TBD]", "[TBD]", "[TBD]", "[TBD]"],
         ["Flagged for Review (%)",    "[TBD]", "[TBD]", "[TBD]", "[TBD]"],
@@ -685,8 +685,8 @@ body(
     "junction in Barrett's cases. For High-Risk lesions, attention concentrates on "
     "post-interventional changes (dyed-lifted-polyps margins, resection boundaries) where "
     "completeness of resection is the critical clinical question. CNN architectures "
-    "(DenseNet-121, EfficientNet-B4) produce sharper, more spatially localised heatmaps, "
-    "while Swin-T shows broader, patch-level attention patterns that may better capture "
+    "(DenseNet-121, EfficientNet-B0) produce sharper, more spatially localised heatmaps, "
+    "while DeiT-Tiny shows broader, patch-level attention patterns that may better capture "
     "global mucosal context."
 )
 
@@ -713,8 +713,8 @@ add_table(
     ["Model", "CD-CTEI (Age)", "CD-CTEI (Sex)", "Worst Subgroup F1", "Meets ≥0.95?"],
     [
         ["DenseNet-121",    "[TBD]", "[TBD]", "[TBD]"],
-        ["EfficientNet-B4", "[TBD]", "[TBD]", "[TBD]"],
-        ["Swin-T",          "[TBD]", "[TBD]", "[TBD]"],
+        ["EfficientNet-B0", "[TBD]", "[TBD]", "[TBD]"],
+        ["DeiT-Tiny",          "[TBD]", "[TBD]", "[TBD]"],
     ],
     tbl_caption="Table 9. Demographic equity analysis — CD-CTEI across age and sex subgroups."
 )
@@ -745,14 +745,14 @@ body(
 )
 body(
     "The CNN-vs-Transformer comparison provides important insights for medical AI system "
-    "design. CNNs (DenseNet-121, EfficientNet-B4) benefit from translation invariance "
+    "design. CNNs (DenseNet-121, EfficientNet-B0) benefit from translation invariance "
     "and hierarchical local feature extraction that aligns well with mucosal texture "
-    "analysis. Swin-T captures global image context through hierarchical shifted-window "
+    "analysis. DeiT-Tiny captures global image context through hierarchical shifted-window "
     "self-attention, which may be advantageous for lesions defined by their spatial "
     "relationship to surrounding tissue rather than intrinsic local texture features. "
     "The practical implication for deployment: DenseNet-121's 7M parameter "
     "footprint makes it deployable on resource-constrained endoscopy workstations, "
-    "while Swin-T's 28M parameters represent a reasonable trade-off between capacity "
+    "while DeiT-Tiny's 28M parameters represent a reasonable trade-off between capacity "
     "and inference speed on modern hardware."
 )
 body(
