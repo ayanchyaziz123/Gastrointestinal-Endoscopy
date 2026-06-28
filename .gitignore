@@ -13,10 +13,29 @@ __pycache__/
 venv/
 .venv/
 
-# Training outputs (large binary files)
-checkpoints/*.pt
+# Model checkpoints (large binary files)
+checkpoints/
+
+# Generated figures and images
 *.png
-*.pth
+
+# Paper outputs
+paper.pdf
+*.aux
+*.log
+*.out
+*.toc
+*.synctex.gz
+*.bbl
+*.blg
+*.fls
+*.fdb_latexmk
+
+# Word/Office temp files
+~$*.docx
+~$*.xlsx
+~$*.pptx
+*.docx
 
 # macOS
 .DS_Store
