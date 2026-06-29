@@ -571,10 +571,10 @@ Weighted avg      & 0.90 & 0.90 & 0.90 & 1145\\
 Table~\ref{tab:xdataset} reports macro F1-score on HyperKvasir (internal
 test) and Kvasir-v2 (zero-shot external validation, 8,000 images). Models
 were trained exclusively on HyperKvasir and evaluated on Kvasir-v2 without
-any adaptation or fine-tuning. EfficientNet-B0 achieves the best
-cross-dataset macro F1 (0.7645) with the smallest F1 drop (0.0674),
-suggesting stronger generalisation than DenseNet-121 despite similar
-in-domain performance. Notably, EfficientNet-B0 achieves 99.4\,\%
+any adaptation or fine-tuning. EfficientNet-B0 achieves the best absolute cross-dataset macro F1 (0.7645),
+while DeiT-Tiny shows the smallest absolute F1 drop (0.0531),
+suggesting that both lightweight architectures generalise substantially
+better than DenseNet-121 despite comparable in-domain performance. Notably, EfficientNet-B0 achieves 99.4\,\%
 High-Risk recall on Kvasir-v2, demonstrating robust safety across datasets.
 
 \begin{table*}[htbp]
@@ -692,11 +692,10 @@ High-Risk recall is competitive across all three conditions
 ($\geq$\,94.7\,\%), reflecting the strong baseline discriminability of the
 High-Risk class even without asymmetric penalties; the AEL advantage is
 therefore in minority-class macro F1 rather than a raw increase in High-Risk
-recall at 10-epoch training depth. The full 25-epoch training used in the
-main experiment amplifies these differences---the AEL-trained DenseNet-121
-achieves macro F1\,=\,0.8270 versus the 10-epoch AEL run at 0.8432,
-confirming that longer training benefits all loss conditions but that AEL
-maintains the macro F1 advantage throughout.
+recall at 10-epoch training depth. Note that the ablation uses 10-epoch runs to control training cost;
+the main experiment trains to 25 epochs with best-checkpoint selection,
+so the ablation F1 values are not directly comparable to
+Table~\ref{tab:main_perf}.
 
 \subsection{Uncertainty Quantification and Workload Simulation}
 
