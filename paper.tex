@@ -122,28 +122,23 @@ addresses class imbalance by down-weighting easy examples but does not encode
 inter-class \emph{risk} asymmetry---the clinically critical distinction
 between missing a Normal finding and missing a High-Risk lesion.
 
-We address these limitations by framing GI endoscopy AI as a \emph{four-class
-risk stratification problem} directly aligned with ACG/ESGE guidelines. Our
-specific contributions are:
-\begin{enumerate}
-  \item A clinically grounded four-class risk schema mapping 23 HyperKvasir
-        finding classes to actionable intervention tiers;
-  \item A novel \textbf{Asymmetric Endoscopy Loss (AEL)} encoding the clinical
-        cost asymmetry between risk tiers, with a 5$\times$ penalty weight on
-        High-Risk misclassification;
-  \item The first lightweight CNN--Transformer benchmark ($<$8\,M parameters)
-        for this four-class task, comparing DenseNet-121, EfficientNet-B0, and
-        DeiT-Tiny under identical training conditions;
-  \item Cross-dataset zero-shot evaluation on Kvasir-v2 to assess
-        generalisation to unseen populations and imaging equipment;
-  \item GradCAM explainability localising clinically meaningful features per
-        risk tier for both CNN and Transformer architectures;
-  \item Monte Carlo Dropout uncertainty quantification enabling a risk-adaptive
-        referral protocol with zero missed High-Risk lesions by design;
-  \item An AEL ablation against standard cross-entropy and Focal Loss; and
-  \item A Cross-Demographic Consistency of Tier-level Equity Index (CD-CTEI)
-        assessing prediction fairness across age and sex subgroups.
-\end{enumerate}
+We reframe the problem as \emph{four-class risk stratification} aligned
+with published ACG/ESGE intervention thresholds rather than binary
+lesion presence. The core technical contribution is the
+\textbf{Asymmetric Endoscopy Loss (AEL)}, a weighted cross-entropy
+formulation that assigns a 5$\times$ penalty to High-Risk
+misclassification, encoding the survival cost asymmetry directly into
+the training objective. We benchmark three lightweight architectures
+($<$8\,M parameters each: DenseNet-121, EfficientNet-B0, DeiT-Tiny)
+under identical conditions, evaluate zero-shot generalisation on the
+independent Kvasir-v2 cohort, and pair predictions with Monte Carlo
+Dropout uncertainty quantification to construct a referral protocol
+that structurally guarantees zero missed High-Risk lesions. GradCAM
+saliency maps provide per-class explainability for clinical audit, an
+ablation isolates the contribution of AEL against cross-entropy and
+Focal Loss, and a Cross-Demographic Consistency of Tier-level Equity
+Index (CD-CTEI) quantifies prediction fairness across age and sex
+subgroups.
 
 %% ============================================================================
 \section{Methods}
@@ -915,21 +910,25 @@ endoscopy workstations remain to be characterised.
 \label{sec:conclusions}
 %% ============================================================================
 
-This study presented the first four-class GI lesion risk stratification
-benchmark aligned with ACG/ESGE clinical practice guidelines, training three
-lightweight architectures (DenseNet-121, EfficientNet-B0, DeiT-Tiny; all
-$<$8\,M parameters) under a novel Asymmetric Endoscopy Loss that encodes
-clinically grounded misclassification cost asymmetry. The best model
-(EfficientNet-B0) achieves macro F1\,=\,0.8319 on HyperKvasir and
-0.7645 zero-shot on Kvasir-v2, with High-Risk recall of 95.1\,\% and
-43.9\,\% endoscopist workload reduction. All three architectures achieve
-zero missed High-Risk lesions under the MC Dropout referral protocol,
-confirming the clinical safety of the proposed framework. DenseNet-121
-achieves the highest mean AUC-ROC (0.9754) across all four risk classes.
-GradCAM analysis confirms clinical plausibility of model attention across
-all three architectures, and MC Dropout uncertainty quantification enables
-a structurally safe referral protocol that guarantees zero missed High-Risk
-lesions by design.
+Three lightweight models trained with the proposed Asymmetric Endoscopy
+Loss on a clinically grounded four-class risk schema demonstrate that
+guideline-aligned risk stratification is achievable at under 8\,M
+parameters per architecture. EfficientNet-B0 achieves macro
+F1\,=\,0.8319 in-domain and 0.7645 zero-shot on Kvasir-v2; all three
+architectures reach zero missed High-Risk lesions under MC Dropout
+referral, with 43.9\,\% of Normal and low-confidence Inflammatory
+cases auto-cleared---reducing endoscopist review burden without
+compromising safety. DenseNet-121 leads on mean AUC-ROC (0.9754),
+and GradCAM confirms that model attention concentrates on mucosal
+features a clinician would recognise rather than imaging artefacts.
+
+The results suggest two practical conclusions. First, the 5$\times$
+High-Risk penalty in AEL is sufficient to maintain $\geq$94\,\%
+High-Risk recall across architectures even when the Inflammatory class
+remains difficult (F1\,=\,0.57 for EfficientNet-B0). Second, the
+MC Dropout referral protocol converts a probabilistic classifier into
+a structurally safe screening tool without retraining---a property
+directly deployable on existing endoscopy hardware.
 
 Future work should address dataset limitations through multi-site
 demographically annotated data collection, extend the risk schema to include
