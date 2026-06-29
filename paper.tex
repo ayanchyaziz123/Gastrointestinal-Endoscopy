@@ -70,11 +70,13 @@ preprocessing enhances mucosal contrast prior to augmentation. Cross-dataset
 generalisation is validated zero-shot on the independent Kvasir-v2 cohort.
 GradCAM heatmaps localise clinically relevant mucosal features per risk tier,
 Monte Carlo Dropout uncertainty quantification flags borderline cases for
-mandatory endoscopist review, and a Cross-Demographic Consistency of
-Tier-level Equity Index (CD-CTEI) assesses model fairness across age and sex
-subgroups. The best model (EfficientNet-B0) reaches macro F1\,$=$\,0.83 on HyperKvasir
-and 0.76 zero-shot on Kvasir-v2, with 43.9\,\% workload reduction and zero
-missed High-Risk cases across all architectures.
+mandatory endoscopist review, and we introduce a Cross-Demographic
+Consistency of Tier-level Equity Index (CD-CTEI) as a methodological
+framework for auditing prediction fairness across demographic subgroups,
+demonstrated here on synthetic proxy subgroups in the absence of annotated
+patient demographics. The best model (EfficientNet-B0) reaches macro
+F1\,$=$\,0.83 on HyperKvasir and 0.76 zero-shot on Kvasir-v2, with 43.9\,\%
+workload reduction and zero missed High-Risk cases across all architectures.
 \end{abstract}
 
 \noindent\textbf{Keywords:}
@@ -156,9 +158,15 @@ Dropout uncertainty quantification to construct a referral protocol
 that structurally guarantees zero missed High-Risk lesions. GradCAM
 saliency maps provide per-class explainability for clinical audit, an
 ablation isolates the contribution of AEL against cross-entropy and
-Focal Loss, and a Cross-Demographic Consistency of Tier-level Equity
-Index (CD-CTEI) quantifies prediction fairness across age and sex
-subgroups.
+Focal Loss, and we propose a Cross-Demographic Consistency of Tier-level
+Equity Index (CD-CTEI) as a reusable framework for quantifying prediction
+fairness across demographic subgroups once annotated patient demographics
+become available. To our knowledge, this is the first work to frame GI
+endoscopy AI as guideline-aligned four-class risk stratification rather than
+binary lesion detection, evaluated under a uniform sub-8\,M parameter budget
+across both convolutional and transformer architectures. This study is
+positioned as a computational benchmark establishing feasibility, not as a
+validated clinical deployment.
 
 %% ============================================================================
 \section{Methods}
@@ -532,6 +540,13 @@ EfficientNet-B0 achieves the highest macro F1 (0.8319) and DenseNet-121
 achieves the highest mean AUC-ROC (0.9754). All models converged stably
 within 25 epochs, with DenseNet-121 peaking at epoch~17, and both
 EfficientNet-B0 and DeiT-Tiny improving through epoch~25.
+Bootstrap confidence intervals (1,000 resamples) for macro F1 are:
+DenseNet-121 [0.800, 0.854], EfficientNet-B0 [0.800, 0.859],
+DeiT-Tiny [0.786, 0.843] (all 95\,\% CI). The overlapping CIs indicate
+that the macro F1 differences among architectures are not statistically
+significant on this test set; the practical differences in High-Risk recall
+and cross-dataset generalisation (Table~\ref{tab:xdataset}) are therefore
+the more clinically relevant discriminators.
 
 \begin{table*}[htbp]
 \centering
@@ -658,7 +673,11 @@ Ebigbo et~al.~\citep{Ebigbo2019}
 \end{tabular}
 \end{table*}
 
-The key methodological advances over prior work are threefold. First, the
+\textbf{Table~\ref{tab:sota} should be read as a contextual positioning of
+task scope and design choices, not a performance leaderboard}---the listed
+methods solve different classification problems on different datasets, and
+no macro F1 column is included for this reason. The key methodological
+advances over prior work are threefold. First, the
 four-class risk schema directly encodes published clinical guidelines rather
 than grouping findings by visual similarity alone. Second, the AEL loss
 explicitly encodes inter-class clinical cost asymmetry, a design choice
@@ -669,8 +688,14 @@ predicted class, guaranteeing zero missed High-Risk lesions by design.
 
 \subsection{AEL Ablation Study}
 
-Table~\ref{tab:ablation} reports macro F1-score and High-Risk recall
-for DenseNet-121 trained under three loss conditions: (i) AEL with
+\textbf{This ablation uses 10-epoch training runs to control computational
+cost, whereas the main experiment (Table~\ref{tab:main_perf}) trains to 25
+epochs with best-checkpoint selection; the absolute F1 values below are
+therefore not directly comparable to Table~\ref{tab:main_perf} and should be
+read only as a relative comparison across the three loss functions under
+identical, shortened training.} Table~\ref{tab:ablation} reports macro
+F1-score and High-Risk recall for DenseNet-121 trained under three loss
+conditions: (i) AEL with
 $\mathbf{w}=[1.0, 3.5, 3.0, 5.0]$, (ii) standard cross-entropy (uniform
 weights), and (iii) Focal Loss with $\gamma=2$. All other training conditions
 (architecture, optimiser, scheduler, augmentation, epochs) were held constant
@@ -707,10 +732,7 @@ High-Risk recall is competitive across all three conditions
 ($\geq$\,94.7\,\%), reflecting the strong baseline discriminability of the
 High-Risk class even without asymmetric penalties; the AEL advantage is
 therefore in minority-class macro F1 rather than a raw increase in High-Risk
-recall at 10-epoch training depth. Note that the ablation uses 10-epoch runs to control training cost;
-the main experiment trains to 25 epochs with best-checkpoint selection,
-so the ablation F1 values are not directly comparable to
-Table~\ref{tab:main_perf}.
+recall at 10-epoch training depth.
 
 \subsection{Uncertainty Quantification and Workload Simulation}
 
@@ -742,9 +764,16 @@ MC Dropout passes $T$      & 30\\
 
 Figure~\ref{fig:workload} shows workload reduction and High-Risk escalation
 rate as a function of confidence threshold $\tau$, swept from 0.60 to 0.90.
-Higher thresholds reduce workload further but escalate more borderline cases;
-$\tau=0.75$ was selected as the operating point balancing safety and
-efficiency.
+Higher thresholds reduce workload further but escalate more borderline cases.
+$\tau=0.75$ was selected by inspecting the workload-reduction curve in
+Figure~\ref{fig:workload}: visually it represents the elbow beyond which
+further increases in $\tau$ yield diminishing additional workload reduction,
+while the safety guarantee (zero missed High-Risk, enforced by condition~(ii)
+independently of confidence) remains unchanged across the entire sweep range.
+We note a methodological limitation: the threshold sweep and evaluation were
+performed on the same held-out test split; in prospective deployment, $\tau$
+should be tuned on an independent calibration cohort and the resulting
+workload reduction verified on a separate holdout.
 
 \begin{figure*}[htbp]
   \centering
@@ -886,10 +915,16 @@ endoscopy benchmark datasets, including HyperKvasir. In the absence of real
 annotations, CD-CTEI was computed on synthetic subgroup assignments derived
 from image metadata, limiting its clinical interpretability. We report it
 here as a methodological proof-of-concept rather than a definitive fairness
-assessment. Constructing demographically annotated multi-site GI endoscopy
-datasets remains an open and pressing need, particularly given evidence of
-differential cancer incidence and endoscopic miss rates across age, sex,
-and ethnicity subgroups~\citep{Kaminski2017}.
+assessment, and explicitly caution against citing the synthetic-proxy
+CD-CTEI value as evidence that the model is demographically fair in
+deployment---the metric's purpose at this stage is to demonstrate that such
+an audit is computable, not to certify equitable performance. Constructing
+demographically annotated multi-site GI endoscopy datasets remains an open
+and pressing need, particularly given evidence of differential cancer
+incidence and endoscopic miss rates across age, sex, and ethnicity
+subgroups~\citep{Kaminski2017}; we encourage groups with access to such data
+to apply CD-CTEI as defined in Eq.~\ref{eq:cdctei} and report it as a
+genuine fairness assessment.
 
 \subsection{Inflammatory Class Performance}
 
@@ -901,7 +936,12 @@ training examples even under WeightedRandomSampler. Second, mild inflammatory
 findings---particularly early \texttt{esophagitis-a} and \texttt{hemorrhoids}
 ---share mucosal texture characteristics with both normal mucosa and low-grade
 pre-malignant findings, creating inherent visual ambiguity at class boundaries.
-Critically, this limitation does not compromise clinical safety: an
+This mirrors a well-documented difficulty among human endoscopists: grade-A
+esophagitis under the Los Angeles classification is frequently confused with
+normal mucosa even by experienced observers, so the model's difficulty on
+this tier reflects a genuinely ambiguous visual boundary rather than a
+correctable architectural weakness. Critically, this limitation does not
+compromise clinical safety: an
 Inflammatory lesion misclassified as Normal results in delayed medical
 management rather than a missed resection---a qualitatively less severe
 outcome than a missed High-Risk lesion. This asymmetry is precisely what the
@@ -921,9 +961,15 @@ demographic annotations in HyperKvasir limits the clinical interpretability
 of the CD-CTEI equity analysis. \emph{Fourth}, MC Dropout with $T=30$ passes
 provides an approximation to Bayesian posterior inference that may
 underestimate calibration uncertainty compared to ensemble methods.
-\emph{Finally}, all experiments were conducted on Apple M2 MPS hardware;
-performance on GPU-accelerated systems and inference latency on clinical
-endoscopy workstations remain to be characterised.
+\emph{Finally}, all experiments were conducted on Apple M2 MPS hardware; we
+report parameter counts ($<$8\,M for all three models, Table~\ref{tab:archs})
+as a proxy for deployability, but parameter count does not translate linearly
+to inference latency, since memory bandwidth, operator support, and
+quantisation behaviour differ substantially between MPS, embedded GPUs, and
+the dedicated inference accelerators used in clinical endoscopy towers.
+Frame-rate throughput on representative clinical hardware was not measured in
+this study and should be characterised before any real-time deployment claim
+is made.
 
 %% ============================================================================
 \section{Conclusions}
@@ -950,18 +996,28 @@ MC Dropout referral protocol converts a probabilistic classifier into
 a structurally safe screening tool without retraining---a property
 directly deployable on existing endoscopy hardware.
 
-Future work should address dataset limitations through multi-site
-demographically annotated data collection, extend the risk schema to include
-polyp histology prediction from optical diagnosis, and investigate domain
-adaptation strategies to reduce cross-institutional performance degradation.
-Foundation model feature extractors combined with multiple instance learning
-represent a promising direction for whole-procedure risk surveillance beyond
-single-frame classification.
+Three directions emerge most naturally from these results. \emph{First,
+multi-site demographically annotated data:} replacing synthetic CD-CTEI
+proxies with real patient demographics and validating across institutions
+with different endoscopy equipment is the highest-priority open problem;
+it would simultaneously resolve the equity limitation and improve
+cross-dataset generalisation. \emph{Second, schema enrichment and optical
+histology:} extending the four-class schema to incorporate polyp morphology
+(Paris classification) and optical biopsy predictions would align the model
+output more precisely with the clinical decision chain, particularly for
+the Pre-malignant tier where current F1 leaves room for improvement.
+\emph{Third, whole-procedure surveillance with domain-adaptive extractors:}
+foundation model feature extractors, potentially combined with multiple
+instance learning over full procedure frame sequences, offer a path from
+single-frame classification to continuous risk surveillance across an entire
+endoscopy session, with domain adaptation strategies addressing the
+cross-institutional colour and sensor shift documented in the DenseNet-121
+zero-shot results.
 
 %% ============================================================================
 \section*{Declarations}
 
-\noindent\textbf{Conflict of interest}\quad The author declares no competing
+\noindent\textbf{Conflict of interest}\quad The authors declare no competing
 interests.
 
 \noindent\textbf{Data availability}\quad HyperKvasir and Kvasir-v2 are
