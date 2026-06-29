@@ -16,8 +16,8 @@ venv/
 # Model checkpoints (large binary files)
 checkpoints/
 
-# Generated figures and images
-*.png
+# Raw dataset images (inside data/ — already excluded above)
+# Paper figures (*.png in project root and version_1/) ARE tracked
 
 # Paper outputs
 paper.pdf
