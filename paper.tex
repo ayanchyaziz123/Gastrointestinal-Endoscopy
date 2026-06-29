@@ -588,8 +588,8 @@ High-Risk recall on Kvasir-v2, demonstrating robust safety across datasets.
 \textbf{Kvasir-v2} & \textbf{F1 Drop} & \textbf{HR Recall (KV2)}\\
 \midrule
 DenseNet-121    & 0.8270 & 0.6415 & 0.1855 & 0.6705\\
-EfficientNet-B0 & \textbf{0.8319} & \textbf{0.7645} & \textbf{0.0674} & \textbf{0.9935}\\
-DeiT-Tiny       & 0.8134 & 0.7603 & 0.0531 & 0.9695\\
+EfficientNet-B0 & \textbf{0.8319} & \textbf{0.7645} & 0.0674 & \textbf{0.9935}\\
+DeiT-Tiny       & 0.8134 & 0.7603 & \textbf{0.0531} & 0.9695\\
 \bottomrule
 \end{tabular}
 \end{table*}
@@ -890,7 +890,7 @@ Critically, this limitation does not compromise clinical safety: an
 Inflammatory lesion misclassified as Normal results in delayed medical
 management rather than a missed resection---a qualitatively less severe
 outcome than a missed High-Risk lesion. This asymmetry is precisely what the
-AEL encodes, and High-Risk recall remained above 95\,\% across all
+AEL encodes, and High-Risk recall remained above 94\,\% across all
 architectures regardless of Inflammatory class performance.
 
 \subsection{Limitations}
