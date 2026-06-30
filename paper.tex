@@ -13,6 +13,13 @@
 \usepackage{microtype}
 \usepackage{placeins}
 
+% Reduce whitespace above/below floats and captions
+\setlength{\textfloatsep}{8pt plus 2pt minus 2pt}
+\setlength{\floatsep}{6pt plus 2pt minus 2pt}
+\setlength{\intextsep}{6pt plus 2pt minus 2pt}
+\setlength{\abovecaptionskip}{4pt}
+\setlength{\belowcaptionskip}{2pt}
+
 \title{\textbf{Beyond Binary: Four-Class Risk Stratification from\\
 Gastrointestinal Endoscopy Using Asymmetric-Cost\\
 Lightweight CNN--Transformer Learning\\
@@ -817,12 +824,12 @@ mucosal context.
     \includegraphics[width=\linewidth]{gradcam_densenet121.png}
     \caption{DenseNet-121}
   \end{subfigure}
-  \vspace{4pt}
+  \vspace{1pt}
   \begin{subfigure}[b]{\textwidth}
     \includegraphics[width=\linewidth]{gradcam_efficientnet_b0.png}
     \caption{EfficientNet-B0}
   \end{subfigure}
-  \vspace{4pt}
+  \vspace{1pt}
   \begin{subfigure}[b]{\textwidth}
     \includegraphics[width=\linewidth]{gradcam_deit_tiny.png}
     \caption{DeiT-Tiny}
