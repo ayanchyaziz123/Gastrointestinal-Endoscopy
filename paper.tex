@@ -836,19 +836,19 @@ CNN architectures produce sharper, more spatially localised heatmaps, while
 DeiT-Tiny shows broader patch-level attention patterns capturing global
 mucosal context.
 
-\begin{figure*}[!ht]
+\begin{figure*}[!htp]
   \centering
-  \begin{subfigure}[b]{0.92\textwidth}
+  \begin{subfigure}[b]{0.75\textwidth}
     \includegraphics[width=\linewidth]{gradcam_densenet121.png}
     \caption{DenseNet-121}
   \end{subfigure}
   \vspace{1pt}
-  \begin{subfigure}[b]{0.92\textwidth}
+  \begin{subfigure}[b]{0.75\textwidth}
     \includegraphics[width=\linewidth]{gradcam_efficientnet_b0.png}
     \caption{EfficientNet-B0}
   \end{subfigure}
   \vspace{1pt}
-  \begin{subfigure}[b]{0.92\textwidth}
+  \begin{subfigure}[b]{0.75\textwidth}
     \includegraphics[width=\linewidth]{gradcam_deit_tiny.png}
     \caption{DeiT-Tiny}
   \end{subfigure}
@@ -866,7 +866,7 @@ Figure~\ref{fig:roc} shows one-vs-rest ROC-AUC curves per class for all
 three models. Figure~\ref{fig:cm} shows normalised confusion matrices on the
 HyperKvasir test set.
 
-\begin{figure}[!ht]
+\begin{figure}[!htp]
   \centering
   \includegraphics[width=\linewidth]{roc_curves.png}
   \caption{One-vs-rest ROC-AUC curves per risk class for all three models
@@ -874,7 +874,7 @@ HyperKvasir test set.
   \label{fig:roc}
 \end{figure}
 
-\begin{figure*}[!ht]
+\begin{figure*}[!htp]
   \centering
   \begin{subfigure}[b]{0.32\textwidth}
     \includegraphics[width=\linewidth]{confusion_matrix_densenet121.png}
@@ -895,6 +895,7 @@ HyperKvasir test set.
   \label{fig:cm}
 \end{figure*}
 
+\clearpage
 %% ============================================================================
 \section{Discussion}
 \label{sec:discussion}
