@@ -235,12 +235,12 @@ WeightedRandomSampler and macro F1 as the primary evaluation metric.
 \begin{figure*}[htbp]
   \centering
   \begin{subfigure}[b]{0.48\textwidth}
-    \includegraphics[width=\linewidth,height=6.5cm,keepaspectratio]{samples_hyperkvasir.png}
+    \includegraphics[width=\linewidth]{samples_hyperkvasir.png}
     \caption{HyperKvasir (training dataset)}
   \end{subfigure}
   \hfill
   \begin{subfigure}[b]{0.48\textwidth}
-    \includegraphics[width=\linewidth,height=6.5cm,keepaspectratio]{"samples_kvasir-v2.png"}
+    \includegraphics[width=\linewidth]{"samples_kvasir-v2.png"}
     \caption{Kvasir-v2 (zero-shot evaluation dataset)}
   \end{subfigure}
   \caption{Representative endoscopy images per risk tier from both datasets.
@@ -253,12 +253,12 @@ WeightedRandomSampler and macro F1 as the primary evaluation metric.
 \begin{figure*}[htbp]
   \centering
   \begin{subfigure}[b]{0.48\textwidth}
-    \includegraphics[width=\linewidth,height=4.5cm,keepaspectratio]{"dist_hyperkvasir_—_class_distribution.png"}
+    \includegraphics[width=\linewidth]{"dist_hyperkvasir_—_class_distribution.png"}
     \caption{HyperKvasir class distribution}
   \end{subfigure}
   \hfill
   \begin{subfigure}[b]{0.48\textwidth}
-    \includegraphics[width=\linewidth,height=4.5cm,keepaspectratio]{"dist_kvasir-v2_—_class_distribution.png"}
+    \includegraphics[width=\linewidth]{"dist_kvasir-v2_—_class_distribution.png"}
     \caption{Kvasir-v2 class distribution}
   \end{subfigure}
   \caption{Risk-tier class distributions after ACG/ESGE schema mapping.
@@ -326,7 +326,7 @@ four tiers.
 
 \begin{figure*}[htbp]
   \centering
-  \includegraphics[width=\linewidth,height=4.5cm,keepaspectratio]{imbalance_handling.png}
+  \includegraphics[width=\linewidth]{imbalance_handling.png}
   \caption{Three-stage class imbalance handling strategy. \textbf{Left:}
     Normal class capped at 3,000 images (raw: 5,252) to reduce dominance.
     \textbf{Centre:} WeightedRandomSampler balances expected class
@@ -501,7 +501,7 @@ training F1 closely throughout training.
 
 \begin{figure*}[htbp]
   \centering
-  \includegraphics[width=\linewidth,height=5cm,keepaspectratio]{training_curves.png}
+  \includegraphics[width=\linewidth]{training_curves.png}
   \caption{Training and validation loss (left) and macro F1-score (right)
     over 25 epochs for DenseNet-121, EfficientNet-B0, and DeiT-Tiny.
     Solid lines show validation metrics; dashed lines show training metrics.
@@ -840,17 +840,17 @@ mucosal context.
 \begin{figure*}[htbp]
   \centering
   \begin{subfigure}[b]{0.92\textwidth}
-    \includegraphics[width=\linewidth,height=4.8cm,keepaspectratio]{gradcam_densenet121.png}
+    \includegraphics[width=\linewidth]{gradcam_densenet121.png}
     \caption{DenseNet-121}
   \end{subfigure}
   \vspace{1pt}
   \begin{subfigure}[b]{0.92\textwidth}
-    \includegraphics[width=\linewidth,height=4.8cm,keepaspectratio]{gradcam_efficientnet_b0.png}
+    \includegraphics[width=\linewidth]{gradcam_efficientnet_b0.png}
     \caption{EfficientNet-B0}
   \end{subfigure}
   \vspace{1pt}
   \begin{subfigure}[b]{0.92\textwidth}
-    \includegraphics[width=\linewidth,height=4.8cm,keepaspectratio]{gradcam_deit_tiny.png}
+    \includegraphics[width=\linewidth]{gradcam_deit_tiny.png}
     \caption{DeiT-Tiny}
   \end{subfigure}
   \caption{GradCAM heatmaps across four risk classes (Normal, Inflammatory,
@@ -878,17 +878,17 @@ HyperKvasir test set.
 \begin{figure*}[htbp]
   \centering
   \begin{subfigure}[b]{0.32\textwidth}
-    \includegraphics[width=\linewidth,height=4.2cm,keepaspectratio]{confusion_matrix_densenet121.png}
+    \includegraphics[width=\linewidth]{confusion_matrix_densenet121.png}
     \caption{DenseNet-121}
   \end{subfigure}
   \hfill
   \begin{subfigure}[b]{0.32\textwidth}
-    \includegraphics[width=\linewidth,height=4.2cm,keepaspectratio]{confusion_matrix_efficientnet_b0.png}
+    \includegraphics[width=\linewidth]{confusion_matrix_efficientnet_b0.png}
     \caption{EfficientNet-B0}
   \end{subfigure}
   \hfill
   \begin{subfigure}[b]{0.32\textwidth}
-    \includegraphics[width=\linewidth,height=4.2cm,keepaspectratio]{confusion_matrix_deit_tiny.png}
+    \includegraphics[width=\linewidth]{confusion_matrix_deit_tiny.png}
     \caption{DeiT-Tiny}
   \end{subfigure}
   \caption{Normalised confusion matrices on the HyperKvasir test set.
