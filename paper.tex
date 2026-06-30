@@ -9,16 +9,35 @@
 \usepackage{caption}
 \usepackage{subcaption}
 \usepackage{natbib}
-\usepackage[top=1in,bottom=1in,left=0.75in,right=0.75in,columnsep=0.25in]{geometry}
+\usepackage[top=0.82in,bottom=0.82in,left=0.65in,right=0.65in,columnsep=0.22in]{geometry}
 \usepackage{microtype}
 \usepackage{placeins}
+\usepackage{titlesec}
+\usepackage{setspace}
 
-% Reduce whitespace above/below floats and captions
-\setlength{\textfloatsep}{8pt plus 2pt minus 2pt}
-\setlength{\floatsep}{6pt plus 2pt minus 2pt}
-\setlength{\intextsep}{6pt plus 2pt minus 2pt}
-\setlength{\abovecaptionskip}{4pt}
-\setlength{\belowcaptionskip}{2pt}
+% Section / subsection heading spacing
+\titlespacing*{\section}{0pt}{8pt plus 2pt minus 1pt}{4pt plus 1pt}
+\titlespacing*{\subsection}{0pt}{6pt plus 2pt minus 1pt}{3pt plus 1pt}
+\titlespacing*{\subsubsection}{0pt}{4pt}{2pt}
+
+% Float and caption spacing
+\setlength{\textfloatsep}{7pt plus 2pt minus 2pt}
+\setlength{\floatsep}{5pt plus 2pt minus 2pt}
+\setlength{\intextsep}{5pt plus 2pt minus 2pt}
+\setlength{\abovecaptionskip}{3pt}
+\setlength{\belowcaptionskip}{1pt}
+
+% Equation display spacing
+\setlength{\abovedisplayskip}{5pt plus 2pt minus 2pt}
+\setlength{\belowdisplayskip}{5pt plus 2pt minus 2pt}
+\setlength{\abovedisplayshortskip}{3pt plus 1pt}
+\setlength{\belowdisplayshortskip}{3pt plus 1pt}
+
+% Caption font size
+\captionsetup{font=footnotesize,labelfont=bf}
+
+% Bibliography entry spacing
+\setlength{\bibsep}{2pt}
 
 \title{\textbf{Beyond Binary: Four-Class Risk Stratification from\\
 Gastrointestinal Endoscopy Using Asymmetric-Cost\\
@@ -56,7 +75,7 @@ and Demographic Equity Analysis}}
 \maketitle
 \begin{@twocolumnfalse}
 \noindent\authoraffils
-\vspace{6pt}
+\vspace{3pt}
 \begin{abstract}
 Gastrointestinal (GI) cancers account for over 3.5 million deaths annually,
 yet existing AI-assisted endoscopy systems reduce the clinical decision to a
@@ -101,8 +120,6 @@ Clinical equity;
 HyperKvasir
 \end{@twocolumnfalse}
 }]
-
-\bigskip
 
 %% ============================================================================
 \section{Introduction}
@@ -284,19 +301,19 @@ four tiers.
   \raggedright\texttt{cecum}, \texttt{pylorus}, \texttt{z-line},
   \texttt{retroflex-stomach}, \texttt{retroflex-rectum},
   \texttt{ileum}, \texttt{bbps-2-3}\arraybackslash &
-  Routine surveillance (5--10\,yr interval)\\[4pt]
+  Routine surveillance (5--10\,yr interval)\\[2pt]
 1 & Inflammatory &
   \raggedright\texttt{esophagitis-a},
   \texttt{ulcerative-colitis-grade-0-1},
   \texttt{ulcerative-colitis-grade-1},
   \texttt{hemorrhoids}\arraybackslash &
-  Medical management + annual follow-up\\[4pt]
+  Medical management + annual follow-up\\[2pt]
 2 & Pre-malignant &
   \raggedright\texttt{barretts}, \texttt{barretts-short-segment},
   \texttt{esophagitis-b-d}, \texttt{polyps},
   \texttt{ulcerative-colitis-grade-1-2},
   \texttt{ulcerative-colitis-grade-2}\arraybackslash &
-  Mandatory biopsy + 3--6\,month surveillance\\[4pt]
+  Mandatory biopsy + 3--6\,month surveillance\\[2pt]
 3 & High-Risk &
   \raggedright\texttt{ulcerative-colitis-grade-2-3},
   \texttt{ulcerative-colitis-grade-3},
@@ -795,7 +812,7 @@ workload reduction verified on a separate holdout.
 
 \begin{figure*}[htbp]
   \centering
-  \includegraphics[width=0.85\linewidth]{workload_simulation.png}
+  \includegraphics[width=0.78\linewidth]{workload_simulation.png}
   \caption{Endoscopist workload reduction (\%) and High-Risk escalation
     rate (\%) as a function of MC Dropout confidence threshold $\tau$
     (best model, $T=30$ passes). The selected operating threshold
@@ -850,7 +867,7 @@ HyperKvasir test set.
 
 \begin{figure*}[htbp]
   \centering
-  \includegraphics[width=0.85\linewidth]{roc_curves.png}
+  \includegraphics[width=0.78\linewidth]{roc_curves.png}
   \caption{One-vs-rest ROC-AUC curves per risk class for all three models
     on the HyperKvasir test set.}
   \label{fig:roc}
