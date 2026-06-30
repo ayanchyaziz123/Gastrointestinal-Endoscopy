@@ -232,7 +232,7 @@ the class distribution in both datasets after mapping to the four-tier schema,
 confirming class imbalance in HyperKvasir and motivating the use of
 WeightedRandomSampler and macro F1 as the primary evaluation metric.
 
-\begin{figure*}[htbp]
+\begin{figure*}[!ht]
   \centering
   \begin{subfigure}[b]{0.48\textwidth}
     \includegraphics[width=\linewidth]{samples_hyperkvasir.png}
@@ -250,7 +250,7 @@ WeightedRandomSampler and macro F1 as the primary evaluation metric.
   \label{fig:samples}
 \end{figure*}
 
-\begin{figure*}[htbp]
+\begin{figure*}[!ht]
   \centering
   \begin{subfigure}[b]{0.48\textwidth}
     \includegraphics[width=\linewidth]{"dist_hyperkvasir_—_class_distribution.png"}
@@ -285,7 +285,7 @@ bowel preparation quality scores and non-pathological states without clinical
 risk stratification relevance, yielding 21 usable finding classes across the
 four tiers.
 
-\begin{table*}[htbp]
+\begin{table*}[!ht]
 \centering
 \caption{Four-class clinical risk stratification schema (ACG/ESGE
   guideline-aligned).}
@@ -324,7 +324,7 @@ four tiers.
 \end{tabular}}
 \end{table*}
 
-\begin{figure*}[htbp]
+\begin{figure*}[!ht]
   \centering
   \includegraphics[width=\linewidth]{imbalance_handling.png}
   \caption{Three-stage class imbalance handling strategy. \textbf{Left:}
@@ -363,7 +363,7 @@ parameters, representing two computational paradigms: convolutional networks
 All models are pre-trained on ImageNet-1k and fine-tuned with task-specific
 classification heads (Table~\ref{tab:archs}).
 
-\begin{table*}[htbp]
+\begin{table*}[!ht]
 \centering
 \caption{Lightweight model architectures benchmarked (all $<$8\,M parameters).}
 \label{tab:archs}
@@ -417,7 +417,7 @@ misclassifying each risk tier (Table~\ref{tab:ael_weights}). The asymmetric
 ratio 5:1 between High-Risk and Normal is consistent with published GI
 oncology mortality data~\citep{Rawla2019}.
 
-\begin{table*}[htbp]
+\begin{table*}[!ht]
 \centering
 \caption{AEL class weight rationale.}
 \label{tab:ael_weights}
@@ -448,7 +448,7 @@ checkpoint per model was saved based on validation macro F1-score. Training
 was conducted on Apple M2 Metal Performance Shaders (MPS) hardware.
 Hyperparameters are summarised in Table~\ref{tab:hparams}.
 
-\begin{table*}[htbp]
+\begin{table*}[!ht]
 \centering
 \caption{Left: Training hyperparameters (identical for all three models).
   Right: Endoscopist workload simulation results (best model,
@@ -499,7 +499,7 @@ F1-score curves for all three models over 25 epochs. All models converge
 stably with no evidence of overfitting, as validation macro F1 tracks
 training F1 closely throughout training.
 
-\begin{figure*}[htbp]
+\begin{figure*}[!ht]
   \centering
   \includegraphics[width=\linewidth]{training_curves.png}
   \caption{Training and validation loss (left) and macro F1-score (right)
@@ -583,7 +583,6 @@ HyperKvasir) not used during training or validation. Model architectures were
 instantiated via torchvision 0.15 (DenseNet-121) and the timm 0.9 library
 (EfficientNet-B0, DeiT-Tiny).
 
-\FloatBarrier
 %% ============================================================================
 \section{Results}
 \label{sec:results}
@@ -606,7 +605,7 @@ significant on this test set; the practical differences in High-Risk recall
 and cross-dataset generalisation (Table~\ref{tab:xdataset}) are therefore
 the more clinically relevant discriminators.
 
-\begin{table*}[htbp]
+\begin{table*}[!ht]
 \centering
 \caption{Classification performance on HyperKvasir test set (AEL loss).}
 \label{tab:main_perf}
@@ -634,7 +633,7 @@ prioritises the most clinically critical class. Inflammatory yields the
 lowest F1 (0.57), attributable to its small class size (97 test samples)
 and inherent visual ambiguity discussed in Section~\ref{sec:discussion}.
 
-\begin{table*}[htbp]
+\begin{table*}[!ht]
 \centering
 \caption{Per-class performance for best model on HyperKvasir test set.}
 \label{tab:per_class}
@@ -665,7 +664,7 @@ suggesting that both lightweight architectures generalise substantially
 better than DenseNet-121 despite comparable in-domain performance. Notably, EfficientNet-B0 achieves 99.4\,\%
 High-Risk recall on Kvasir-v2, demonstrating robust safety across datasets.
 
-\begin{table*}[htbp]
+\begin{table*}[!ht]
 \centering
 \caption{Cross-dataset generalisation---macro F1 (train: HyperKvasir;
   evaluate: Kvasir-v2 zero-shot).}
@@ -693,7 +692,7 @@ explainability, and clinical guideline alignment---the dimensions that
 differentiate a safety-critical clinical decision support system from a
 general classification model.
 
-\begin{table*}[htbp]
+\begin{table*}[!ht]
 \centering
 \caption{Comparison with representative GI endoscopy AI approaches.
   Direct macro F1 comparison across rows is not meaningful due to
@@ -759,7 +758,7 @@ weights), and (iii) Focal Loss with $\gamma=2$. All other training conditions
 (architecture, optimiser, scheduler, augmentation, epochs) were held constant
 to isolate the effect of loss function choice.
 
-\begin{table*}[htbp]
+\begin{table*}[!ht]
 \centering
 \caption{AEL ablation on DenseNet-121 (10-epoch training runs, identical
   conditions except loss function). Bold marks best per column.}
@@ -775,7 +774,7 @@ Focal Loss ($\gamma=2$)              & 0.8386        & 0.9474\\
 \end{tabular}
 \end{table*}
 
-\begin{figure}[htbp]
+\begin{figure}[!ht]
   \centering
   \includegraphics[width=\linewidth]{ablation_study.png}
   \caption{AEL ablation bar chart. Macro F1 and High-Risk Recall for
@@ -813,7 +812,7 @@ performed on the same held-out test split; in prospective deployment, $\tau$
 should be tuned on an independent calibration cohort and the resulting
 workload reduction verified on a separate holdout.
 
-\begin{figure}[htbp]
+\begin{figure}[!ht]
   \centering
   \includegraphics[width=\linewidth]{workload_simulation.png}
   \caption{Workload reduction (\%) and High-Risk escalation rate (\%)
@@ -837,7 +836,7 @@ CNN architectures produce sharper, more spatially localised heatmaps, while
 DeiT-Tiny shows broader patch-level attention patterns capturing global
 mucosal context.
 
-\begin{figure*}[htbp]
+\begin{figure*}[!ht]
   \centering
   \begin{subfigure}[b]{0.92\textwidth}
     \includegraphics[width=\linewidth]{gradcam_densenet121.png}
@@ -867,7 +866,7 @@ Figure~\ref{fig:roc} shows one-vs-rest ROC-AUC curves per class for all
 three models. Figure~\ref{fig:cm} shows normalised confusion matrices on the
 HyperKvasir test set.
 
-\begin{figure}[htbp]
+\begin{figure}[!ht]
   \centering
   \includegraphics[width=\linewidth]{roc_curves.png}
   \caption{One-vs-rest ROC-AUC curves per risk class for all three models
@@ -875,7 +874,7 @@ HyperKvasir test set.
   \label{fig:roc}
 \end{figure}
 
-\begin{figure*}[htbp]
+\begin{figure*}[!ht]
   \centering
   \begin{subfigure}[b]{0.32\textwidth}
     \includegraphics[width=\linewidth]{confusion_matrix_densenet121.png}
@@ -896,7 +895,6 @@ HyperKvasir test set.
   \label{fig:cm}
 \end{figure*}
 
-\FloatBarrier
 %% ============================================================================
 \section{Discussion}
 \label{sec:discussion}
@@ -1009,7 +1007,6 @@ Frame-rate throughput on representative clinical hardware was not measured in
 this study and should be characterised before any real-time deployment claim
 is made.
 
-\FloatBarrier
 %% ============================================================================
 \section{Conclusions}
 \label{sec:conclusions}
