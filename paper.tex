@@ -11,6 +11,7 @@
 \usepackage{natbib}
 \usepackage[top=1in,bottom=1in,left=0.75in,right=0.75in,columnsep=0.25in]{geometry}
 \usepackage{microtype}
+\usepackage{placeins}
 
 \title{\textbf{Beyond Binary: Four-Class Risk Stratification from\\
 Gastrointestinal Endoscopy Using Asymmetric-Cost\\
@@ -530,6 +531,7 @@ HyperKvasir) not used during training or validation. Model architectures were
 instantiated via torchvision 0.15 (DenseNet-121) and the timm 0.9 library
 (EfficientNet-B0, DeiT-Tiny).
 
+\FloatBarrier
 %% ============================================================================
 \section{Results}
 \label{sec:results}
@@ -863,6 +865,7 @@ HyperKvasir test set.
   \label{fig:cm}
 \end{figure*}
 
+\FloatBarrier
 %% ============================================================================
 \section{Discussion}
 \label{sec:discussion}
@@ -975,6 +978,7 @@ Frame-rate throughput on representative clinical hardware was not measured in
 this study and should be characterised before any real-time deployment claim
 is made.
 
+\FloatBarrier
 %% ============================================================================
 \section{Conclusions}
 \label{sec:conclusions}
