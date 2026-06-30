@@ -266,34 +266,38 @@ four tiers.
 \caption{Four-class clinical risk stratification schema (ACG/ESGE
   guideline-aligned).}
 \label{tab:schema}
-\begin{tabular}{clp{4.2cm}p{4.2cm}}
+{\small
+\begin{tabular}{clp{5.8cm}p{3.8cm}}
 \toprule
-\textbf{Class} & \textbf{Label} & \textbf{HyperKvasir Source Classes} &
+\textbf{Class} & \textbf{Label} &
+\textbf{HyperKvasir Source Classes} &
 \textbf{Clinical Action}\\
 \midrule
 0 & Normal &
-  \texttt{cecum}, \texttt{pylorus}, \texttt{z-line},
-  \texttt{retroflex-stomach}, \texttt{retroflex-rectum}, \texttt{ileum},
-  \texttt{bbps-2-3} &
+  \raggedright\texttt{cecum}, \texttt{pylorus}, \texttt{z-line},
+  \texttt{retroflex-stomach}, \texttt{retroflex-rectum},
+  \texttt{ileum}, \texttt{bbps-2-3}\arraybackslash &
   Routine surveillance (5--10\,yr interval)\\[4pt]
 1 & Inflammatory &
-  \texttt{esophagitis-a}, \texttt{ulcerative-colitis-grade-0-1},
-  \texttt{ulcerative-colitis-grade-1}, \texttt{hemorrhoids} &
+  \raggedright\texttt{esophagitis-a},
+  \texttt{ulcerative-colitis-grade-0-1},
+  \texttt{ulcerative-colitis-grade-1},
+  \texttt{hemorrhoids}\arraybackslash &
   Medical management + annual follow-up\\[4pt]
 2 & Pre-malignant &
-  \texttt{barretts}, \texttt{barretts-short-segment},
+  \raggedright\texttt{barretts}, \texttt{barretts-short-segment},
   \texttt{esophagitis-b-d}, \texttt{polyps},
   \texttt{ulcerative-colitis-grade-1-2},
-  \texttt{ulcerative-colitis-grade-2} &
+  \texttt{ulcerative-colitis-grade-2}\arraybackslash &
   Mandatory biopsy + 3--6\,month surveillance\\[4pt]
 3 & High-Risk &
-  \texttt{ulcerative-colitis-grade-2-3},
+  \raggedright\texttt{ulcerative-colitis-grade-2-3},
   \texttt{ulcerative-colitis-grade-3},
   \texttt{dyed-lifted-polyps},
-  \texttt{dyed-resection-margins} &
+  \texttt{dyed-resection-margins}\arraybackslash &
   Immediate resection / oncology referral\\
 \bottomrule
-\end{tabular}
+\end{tabular}}
 \end{table*}
 
 \begin{figure*}[htbp]
@@ -424,7 +428,8 @@ Hyperparameters are summarised in Table~\ref{tab:hparams}.
 \centering
 \caption{Training hyperparameters (identical for all three models).}
 \label{tab:hparams}
-\begin{tabular}{ll}
+{\small
+\begin{tabular}{lp{4.2cm}}
 \toprule
 \textbf{Hyperparameter} & \textbf{Value}\\
 \midrule
@@ -439,7 +444,7 @@ Class balancing    & WeightedRandomSampler\\
 Preprocessing      & CLAHE (clip\,$=$\,2.0, tile\,$=$\,$8\times8$)\\
 Reproducibility    & SEED\,$=$\,42, \texttt{cudnn.deterministic=True}\\
 \bottomrule
-\end{tabular}
+\end{tabular}}
 \end{table}
 
 Figure~\ref{fig:training} shows training and validation loss and macro
