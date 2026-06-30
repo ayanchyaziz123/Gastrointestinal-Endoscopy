@@ -9,7 +9,7 @@
 \usepackage{caption}
 \usepackage{subcaption}
 \usepackage{natbib}
-\usepackage[top=0.82in,bottom=0.82in,left=0.65in,right=0.65in,columnsep=0.22in]{geometry}
+\usepackage[top=0.73in,bottom=0.73in,left=0.58in,right=0.58in,columnsep=0.20in]{geometry}
 \usepackage{microtype}
 \usepackage{placeins}
 \usepackage{titlesec}
@@ -21,10 +21,10 @@
 \titlespacing*{\subsubsection}{0pt}{4pt}{2pt}
 
 % Float and caption spacing
-\setlength{\textfloatsep}{7pt plus 2pt minus 2pt}
-\setlength{\floatsep}{5pt plus 2pt minus 2pt}
-\setlength{\intextsep}{5pt plus 2pt minus 2pt}
-\setlength{\abovecaptionskip}{3pt}
+\setlength{\textfloatsep}{5pt plus 1pt minus 1pt}
+\setlength{\floatsep}{4pt plus 1pt minus 1pt}
+\setlength{\intextsep}{4pt plus 1pt minus 1pt}
+\setlength{\abovecaptionskip}{2pt}
 \setlength{\belowcaptionskip}{1pt}
 
 % Equation display spacing
@@ -448,12 +448,16 @@ checkpoint per model was saved based on validation macro F1-score. Training
 was conducted on Apple M2 Metal Performance Shaders (MPS) hardware.
 Hyperparameters are summarised in Table~\ref{tab:hparams}.
 
-\begin{table}[htbp]
+\begin{table*}[htbp]
 \centering
-\caption{Training hyperparameters (identical for all three models).}
+\caption{Left: Training hyperparameters (identical for all three models).
+  Right: Endoscopist workload simulation results (best model,
+  $\tau=0.75$, $T=30$ MC Dropout passes).}
 \label{tab:hparams}
 {\small
-\begin{tabular}{lp{4.2cm}}
+\begin{minipage}[t]{0.47\textwidth}
+\centering
+\begin{tabular}{lp{3.4cm}}
 \toprule
 \textbf{Hyperparameter} & \textbf{Value}\\
 \midrule
@@ -468,8 +472,27 @@ Class balancing    & WeightedRandomSampler\\
 Preprocessing      & CLAHE (clip\,$=$\,2.0, tile\,$=$\,$8\times8$)\\
 Reproducibility    & SEED\,$=$\,42, \texttt{cudnn.deterministic=True}\\
 \bottomrule
-\end{tabular}}
-\end{table}
+\end{tabular}
+\end{minipage}%
+\hfill
+\begin{minipage}[t]{0.47\textwidth}
+\centering
+\label{tab:workload}
+\begin{tabular}{ll}
+\toprule
+\textbf{Metric} & \textbf{Value}\\
+\midrule
+Total test images          & 1,145\\
+AI auto-cleared            & 503 (43.9\,\%)\\
+Flagged for endoscopist    & 642 (56.1\,\%)\\
+Workload reduction         & 43.9\,\%\\
+Missed High-Risk lesions   & \textbf{0} \quad (target: 0)\\
+Confidence threshold $\tau$ & 0.75\\
+MC Dropout passes $T$      & 30\\
+\bottomrule
+\end{tabular}
+\end{minipage}}
+\end{table*}
 
 Figure~\ref{fig:training} shows training and validation loss and macro
 F1-score curves for all three models over 25 epochs. All models converge
@@ -777,26 +800,6 @@ threshold $\tau=0.75$. The system auto-clears 43.9\,\% of cases while
 escalating all Pre-malignant and High-Risk predictions to endoscopist review,
 achieving zero missed High-Risk lesions by design.
 
-\begin{table}[htbp]
-\centering
-\caption{Endoscopist workload simulation (best model, $\tau=0.75$,
-  $T=30$ MC passes).}
-\label{tab:workload}
-\begin{tabular}{ll}
-\toprule
-\textbf{Metric} & \textbf{Value}\\
-\midrule
-Total test images          & 1,145\\
-AI auto-cleared            & 503 (43.9\,\%)\\
-Flagged for endoscopist    & 642 (56.1\,\%)\\
-Workload reduction         & 43.9\,\%\\
-Missed High-Risk lesions   & \textbf{0} \quad (target: 0)\\
-Confidence threshold $\tau$ & 0.75\\
-MC Dropout passes $T$      & 30\\
-\bottomrule
-\end{tabular}
-\end{table}
-
 Figure~\ref{fig:workload} shows workload reduction and High-Risk escalation
 rate as a function of confidence threshold $\tau$, swept from 0.60 to 0.90.
 Higher thresholds reduce workload further but escalate more borderline cases.
@@ -812,7 +815,7 @@ workload reduction verified on a separate holdout.
 
 \begin{figure*}[htbp]
   \centering
-  \includegraphics[width=0.78\linewidth]{workload_simulation.png}
+  \includegraphics[width=0.72\linewidth]{workload_simulation.png}
   \caption{Endoscopist workload reduction (\%) and High-Risk escalation
     rate (\%) as a function of MC Dropout confidence threshold $\tau$
     (best model, $T=30$ passes). The selected operating threshold
@@ -837,17 +840,17 @@ mucosal context.
 
 \begin{figure*}[htbp]
   \centering
-  \begin{subfigure}[b]{\textwidth}
+  \begin{subfigure}[b]{0.92\textwidth}
     \includegraphics[width=\linewidth]{gradcam_densenet121.png}
     \caption{DenseNet-121}
   \end{subfigure}
   \vspace{1pt}
-  \begin{subfigure}[b]{\textwidth}
+  \begin{subfigure}[b]{0.92\textwidth}
     \includegraphics[width=\linewidth]{gradcam_efficientnet_b0.png}
     \caption{EfficientNet-B0}
   \end{subfigure}
   \vspace{1pt}
-  \begin{subfigure}[b]{\textwidth}
+  \begin{subfigure}[b]{0.92\textwidth}
     \includegraphics[width=\linewidth]{gradcam_deit_tiny.png}
     \caption{DeiT-Tiny}
   \end{subfigure}
@@ -867,7 +870,7 @@ HyperKvasir test set.
 
 \begin{figure*}[htbp]
   \centering
-  \includegraphics[width=0.78\linewidth]{roc_curves.png}
+  \includegraphics[width=0.72\linewidth]{roc_curves.png}
   \caption{One-vs-rest ROC-AUC curves per risk class for all three models
     on the HyperKvasir test set.}
   \label{fig:roc}
