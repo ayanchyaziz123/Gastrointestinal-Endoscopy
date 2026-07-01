@@ -8,7 +8,7 @@
 \usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
 \usepackage{caption}
 \usepackage{subcaption}
-\usepackage{natbib}
+\usepackage[numbers,sort&compress]{natbib}
 \usepackage[top=0.73in,bottom=0.73in,left=0.58in,right=0.58in,columnsep=0.20in]{geometry}
 \usepackage{microtype}
 \usepackage{placeins}
@@ -112,10 +112,7 @@ Risk stratification;
 Asymmetric loss function;
 Lightweight neural networks;
 Vision Transformer;
-DenseNet;
-EfficientNet;
-GradCAM;
-Monte Carlo Dropout;
+Monte Carlo Dropout
 Clinical equity;
 HyperKvasir
 \end{@twocolumnfalse}
@@ -1054,15 +1051,32 @@ zero-shot results.
 %% ============================================================================
 \section*{Declarations}
 
-\noindent\textbf{Conflict of interest}\quad The authors declare no competing
-interests.
+\noindent\textbf{Ethics approval}\quad This study used only publicly
+available, fully anonymised datasets (HyperKvasir and Kvasir-v2). No
+human subjects were recruited and no patient-identifiable data were
+accessed. Institutional ethics approval was therefore not required.
+
+\noindent\textbf{Author contributions}\quad
+Azizur Rahman: Conceptualization, Methodology, Software, Formal analysis,
+Investigation, Data curation, Visualization, Writing -- original draft.
+Nakib Uddin Ahmed: Software, Validation, Writing -- review \& editing.
+Mehjabin Ferdous: Clinical guideline validation, Resources,
+Writing -- review \& editing.
+Kadirur Rahman Chowdhury: Conceptualization, Supervision,
+Writing -- review \& editing.
+
+\noindent\textbf{Funding}\quad The authors received no specific funding
+for this work.
+
+\noindent\textbf{Conflict of interest}\quad The authors declare no
+competing interests.
 
 \noindent\textbf{Data availability}\quad HyperKvasir and Kvasir-v2 are
-publicly available datasets. Code and trained checkpoints will be released
-upon acceptance.
+publicly available datasets. Code and trained model checkpoints will be
+released upon acceptance.
 
 %% ============================================================================
-\bibliographystyle{plainnat}
+\bibliographystyle{unsrt}
 \bibliography{refs}
 
 \begin{thebibliography}{99}
