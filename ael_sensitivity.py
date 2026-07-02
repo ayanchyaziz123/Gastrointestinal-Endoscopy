@@ -147,14 +147,16 @@ def train_one(ael_weights, hr_w):
     for epoch in range(1, EPOCHS + 1):
         model.train()
         t0 = time.time()
+        running_loss = 0.0
         for i, (imgs, labels) in enumerate(train_ldr, 1):
             imgs, labels = imgs.to(DEVICE), labels.to(DEVICE)
             optimizer.zero_grad()
             loss = criterion(model(imgs), labels)
             loss.backward()
             optimizer.step()
+            running_loss += loss.item()
             if i % 20 == 0 or i == n_batches:
-                print(f'  [w={hr_w}] epoch {epoch}/{EPOCHS}  batch {i}/{n_batches}', end='\r')
+                print(f'  [w={hr_w}] epoch {epoch}/{EPOCHS}  batch {i}/{n_batches}  loss={running_loss/i:.4f}', flush=True)
         scheduler.step()
 
         # validation
@@ -167,7 +169,7 @@ def train_one(ael_weights, hr_w):
                 trues.extend(labels.numpy())
         val_f1 = f1_score(trues, preds, average='macro', zero_division=0)
         elapsed = time.time() - t0
-        print(f'  [w={hr_w}] epoch {epoch}/{EPOCHS}  val_f1={val_f1:.4f}  ({elapsed:.0f}s)')
+        print(f'  ✓ [w={hr_w}] epoch {epoch}/{EPOCHS}  val_f1={val_f1:.4f}  ({elapsed:.0f}s)', flush=True)
 
         if val_f1 > best_val_f1:
             best_val_f1 = val_f1
