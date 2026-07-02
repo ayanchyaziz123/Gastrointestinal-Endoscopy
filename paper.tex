@@ -420,16 +420,8 @@ oncology mortality data~\citep{Rawla2019}.
 \subsection{Training Protocol}
 \label{sec:training}
 
-All models were trained for 25 epochs using the AdamW
-optimiser~\citep{Loshchilov2019} with initial learning rate
-$2\!\times\!10^{-4}$ and weight decay $1\!\times\!10^{-4}$. The learning
-rate was annealed using CosineAnnealingLR with
-$\eta_{\min}=1\!\times\!10^{-6}$. Gradient norms were clipped at 1.0. Batch
-size was 32 for all models. A fixed random seed (SEED\,$=$\,42) was applied
-with \texttt{cudnn.deterministic=True} for reproducibility. The best
-checkpoint per model was saved based on validation macro F1-score. Training
-was conducted on Apple M2 Metal Performance Shaders (MPS) hardware.
-Hyperparameters are summarised in Table~\ref{tab:hparams}.
+All models were trained identically on Apple M2 MPS hardware; full
+hyperparameters are listed in Table~\ref{tab:hparams}.
 
 \begin{table*}[!ht]
 \centering
@@ -495,17 +487,10 @@ training F1 closely throughout training.
 \subsection{GradCAM Explainability}
 \label{sec:gradcam}
 
-Gradient-weighted Class Activation Mapping (GradCAM)~\citep{Selvaraju2017}
-generates class-discriminative saliency maps by weighting spatial feature map
-channels by the mean gradient of the target class score with respect to that
-channel, followed by ReLU activation. For CNN architectures (DenseNet-121,
-EfficientNet-B0), GradCAM targets the final convolutional feature map. For
-DeiT-Tiny, gradients are computed with respect to the final
-layer-normalisation output; the resulting 1D token sequence is reshaped to a
-$14\times14$ spatial grid before bicubic upsampling to the input resolution.
-All gradient hooks use \texttt{register\_full\_backward\_hook}
-(PyTorch\,$\geq$\,2.0). Heatmaps are normalised to $[0,1]$ and overlaid on
-the original image using a jet colourmap.
+GradCAM~\citep{Selvaraju2017} generates class-discriminative saliency maps
+by weighting spatial feature channels by the mean gradient of the target
+class score, followed by ReLU. For DeiT-Tiny, token gradients are reshaped
+to a $14\times14$ grid before bicubic upsampling to input resolution.
 
 \subsection{Monte Carlo Dropout Uncertainty Quantification}
 \label{sec:mcdropout}
@@ -528,12 +513,9 @@ zero auto-cleared High-Risk lesions regardless of confidence.
 \subsection{Endoscopist Workload Simulation}
 \label{sec:workload}
 
-We simulated a two-tier AI-assisted screening workflow. Images with
-confidence $\geq\tau$ and predicted class $<2$ (Normal or Inflammatory) are
-auto-cleared; all others are escalated to endoscopist review. Workload
-reduction is quantified as the proportion of test images auto-cleared.
-Confidence thresholds were swept from 0.60 to 0.90 to characterise the
-trade-off between workload reduction and escalation sensitivity.
+Images with confidence $\geq\tau$ and predicted class $<2$ are auto-cleared;
+all others are escalated to endoscopist review. Thresholds were swept from
+0.60 to 0.90; results at $\tau=0.75$ are reported in Table~\ref{tab:hparams}.
 
 \subsection{Demographic Equity Analysis}
 \label{sec:equity}
@@ -556,15 +538,9 @@ subgroup assignments based on image metadata are used as a proxy, noting
 that this limits clinical interpretability pending a demographically annotated
 GI endoscopy dataset.
 
-\subsection{Performance Metrics}
-
-Performance was evaluated using macro F1-score as the primary metric, given
-class imbalance in HyperKvasir. Secondary metrics include per-class
-precision, recall, F1-score, and one-vs-rest area under the ROC curve
-(AUC-ROC). All metrics were computed on the held-out test set (15\,\% of
-HyperKvasir) not used during training or validation. Model architectures were
-instantiated via torchvision 0.15 (DenseNet-121) and the timm 0.9 library
-(EfficientNet-B0, DeiT-Tiny).
+Macro F1-score is the primary metric given class imbalance; secondary
+metrics are per-class precision, recall, F1, and one-vs-rest AUC-ROC,
+all computed on the held-out test set.
 
 %% ============================================================================
 \section{Results}
