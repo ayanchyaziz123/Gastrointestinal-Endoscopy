@@ -4,7 +4,7 @@ Trains DenseNet-121 for 10 epochs with High-Risk weights 3-7,
 keeping all other weights fixed at [1.0, 3.5, 3.0, w].
 Reports Macro F1 and High-Risk Recall on the held-out test set.
 """
-import os, random, warnings
+import os, random, warnings, time
 import numpy as np
 import torch
 import torch.nn as nn
@@ -12,9 +12,8 @@ from torch.utils.data import Dataset, DataLoader, WeightedRandomSampler
 from torchvision import transforms, models
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import f1_score, classification_report
+from sklearn.metrics import f1_score
 from PIL import Image
-import cv2
 from PIL import ImageFile
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 warnings.filterwarnings('ignore')
@@ -24,37 +23,22 @@ PROJECT_DIR  = '/Users/rahmanazizur/Desktop/GastroEndoscopy-Risk-Stratification'
 SEED         = 42
 NUM_CLASSES  = 4
 IMG_SIZE     = 224
-BATCH_SIZE   = 64
+BATCH_SIZE   = 32          # smaller batch = faster first iteration feedback
 EPOCHS       = 10
 LR           = 1e-4
 DROPOUT      = 0.5
-HR_WEIGHTS   = [3.0, 4.0, 5.0, 6.0, 7.0]   # High-Risk weight to sweep
-BASE_WEIGHTS = [1.0, 3.5, 3.0]               # Normal, Inflammatory, Pre-malignant
+HR_WEIGHTS   = [3.0, 4.0, 5.0, 6.0, 7.0]
+BASE_WEIGHTS = [1.0, 3.5, 3.0]
 
-random.seed(SEED)
-np.random.seed(SEED)
-torch.manual_seed(SEED)
-torch.backends.cudnn.deterministic = True
+random.seed(SEED); np.random.seed(SEED); torch.manual_seed(SEED)
 
-DEVICE = torch.device('mps') if torch.backends.mps.is_available() else \
+DEVICE = torch.device('mps')  if torch.backends.mps.is_available() else \
          torch.device('cuda') if torch.cuda.is_available() else \
          torch.device('cpu')
 print(f'Device: {DEVICE}')
 
-# ── CLAHE ─────────────────────────────────────────────────────────────────────
-class CLAHETransform:
-    def __call__(self, img):
-        try:
-            img_np = np.array(img.convert('RGB'))
-            clahe  = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
-            lab         = cv2.cvtColor(img_np, cv2.COLOR_RGB2LAB)
-            lab[..., 0] = clahe.apply(lab[..., 0])
-            return Image.fromarray(cv2.cvtColor(lab, cv2.COLOR_LAB2RGB))
-        except Exception:
-            return img
-
+# ── Transforms (no CLAHE — consistent across all weight configs) ─────────────
 train_tf = transforms.Compose([
-    CLAHETransform(),
     transforms.Resize((IMG_SIZE, IMG_SIZE)),
     transforms.RandomHorizontalFlip(),
     transforms.RandomVerticalFlip(),
@@ -63,7 +47,6 @@ train_tf = transforms.Compose([
     transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
 ])
 val_tf = transforms.Compose([
-    CLAHETransform(),
     transforms.Resize((IMG_SIZE, IMG_SIZE)),
     transforms.ToTensor(),
     transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
@@ -74,7 +57,7 @@ _BLANK = Image.new('RGB', (IMG_SIZE, IMG_SIZE), (0, 0, 0))
 
 class EndoscopyDataset(Dataset):
     def __init__(self, df, transform=None):
-        self.df        = df.reset_index(drop=True)
+        self.df = df.reset_index(drop=True)
         self.transform = transform
 
     def __len__(self): return len(self.df)
@@ -121,19 +104,19 @@ def load_hyperkvasir(max_normal=3000):
         normal_paths = normal_paths[:max_normal]
     return pd.DataFrame(normal_paths + other_rows)
 
+print('Loading dataset...')
 df = load_hyperkvasir()
 train_df, temp  = train_test_split(df, test_size=0.3, stratify=df['label'], random_state=SEED)
-val_df, test_df = train_test_split(temp, test_size=0.5, stratify=temp['label'], random_state=SEED)
+val_df,  test_df = train_test_split(temp, test_size=0.5, stratify=temp['label'], random_state=SEED)
 print(f'Train: {len(train_df)}  Val: {len(val_df)}  Test: {len(test_df)}')
 
-# WeightedRandomSampler
 counts  = train_df['label'].value_counts().sort_index().values
 w_per   = 1.0 / counts
 samples = torch.tensor([w_per[l] for l in train_df['label'].values], dtype=torch.float)
 sampler = WeightedRandomSampler(samples, len(samples), replacement=True)
 
-test_ldr = DataLoader(EndoscopyDataset(test_df, val_tf),
-                      BATCH_SIZE, shuffle=False, num_workers=0)
+val_ldr  = DataLoader(EndoscopyDataset(val_df,  val_tf), BATCH_SIZE, shuffle=False, num_workers=0)
+test_ldr = DataLoader(EndoscopyDataset(test_df, val_tf), BATCH_SIZE, shuffle=False, num_workers=0)
 
 # ── Model ─────────────────────────────────────────────────────────────────────
 def build_model():
@@ -145,7 +128,7 @@ def build_model():
     return m.to(DEVICE)
 
 # ── Train ─────────────────────────────────────────────────────────────────────
-def train_one(ael_weights):
+def train_one(ael_weights, hr_w):
     model     = build_model()
     criterion = nn.CrossEntropyLoss(
         weight=torch.tensor(ael_weights, dtype=torch.float).to(DEVICE)
@@ -157,20 +140,21 @@ def train_one(ael_weights):
         EndoscopyDataset(train_df, train_tf),
         BATCH_SIZE, sampler=sampler, num_workers=0
     )
-    val_ldr = DataLoader(
-        EndoscopyDataset(val_df, val_tf),
-        BATCH_SIZE, shuffle=False, num_workers=0
-    )
 
+    n_batches = len(train_ldr)
     best_val_f1, best_state = 0.0, None
+
     for epoch in range(1, EPOCHS + 1):
         model.train()
-        for imgs, labels in train_ldr:
+        t0 = time.time()
+        for i, (imgs, labels) in enumerate(train_ldr, 1):
             imgs, labels = imgs.to(DEVICE), labels.to(DEVICE)
             optimizer.zero_grad()
             loss = criterion(model(imgs), labels)
             loss.backward()
             optimizer.step()
+            if i % 20 == 0 or i == n_batches:
+                print(f'  [w={hr_w}] epoch {epoch}/{EPOCHS}  batch {i}/{n_batches}', end='\r')
         scheduler.step()
 
         # validation
@@ -182,10 +166,12 @@ def train_one(ael_weights):
                 preds.extend(out.argmax(1).cpu().numpy())
                 trues.extend(labels.numpy())
         val_f1 = f1_score(trues, preds, average='macro', zero_division=0)
+        elapsed = time.time() - t0
+        print(f'  [w={hr_w}] epoch {epoch}/{EPOCHS}  val_f1={val_f1:.4f}  ({elapsed:.0f}s)')
+
         if val_f1 > best_val_f1:
             best_val_f1 = val_f1
             best_state  = {k: v.clone() for k, v in model.state_dict().items()}
-        print(f'  epoch {epoch:2d}/{EPOCHS}  val_macro_f1={val_f1:.4f}')
 
     model.load_state_dict(best_state)
     return model
@@ -200,11 +186,9 @@ def evaluate(model):
         preds.extend(out.argmax(1).cpu().numpy())
         trues.extend(labels.numpy())
     preds, trues = np.array(preds), np.array(trues)
-    macro_f1  = f1_score(trues, preds, average='macro',    zero_division=0)
-    hr_recall = f1_score(trues, preds, labels=[3], average=None, zero_division=0)
-    # actual recall for class 3
-    mask = trues == 3
-    hr_rec = preds[mask].tolist().count(3) / mask.sum() if mask.sum() > 0 else 0.0
+    macro_f1 = f1_score(trues, preds, average='macro', zero_division=0)
+    mask     = trues == 3
+    hr_rec   = (preds[mask] == 3).sum() / mask.sum() if mask.sum() > 0 else 0.0
     return macro_f1, hr_rec
 
 # ── Main sweep ────────────────────────────────────────────────────────────────
@@ -212,7 +196,7 @@ results = []
 for w in HR_WEIGHTS:
     ael = BASE_WEIGHTS + [w]
     print(f'\n=== High-Risk weight = {w} | AEL = {ael} ===')
-    model = train_one(ael)
+    model = train_one(ael, w)
     macro_f1, hr_recall = evaluate(model)
     results.append({'HR_weight': w, 'Macro_F1': macro_f1, 'HR_Recall': hr_recall})
     print(f'  >> Macro F1={macro_f1:.4f}  HR Recall={hr_recall:.4f}')
@@ -220,21 +204,21 @@ for w in HR_WEIGHTS:
     if DEVICE.type == 'mps':
         torch.mps.empty_cache()
 
-# ── Print table ───────────────────────────────────────────────────────────────
+# ── Print results ─────────────────────────────────────────────────────────────
 print('\n\n========== RESULTS ==========')
-print(f"{'HR weight':<12} {'Macro F1':<12} {'HR Recall':<12}")
-print('-' * 36)
+print(f"{'HR weight':<12} {'Macro F1':<12} {'HR Recall'}")
+print('-' * 38)
 for r in results:
     marker = ' ◄ (ours)' if r['HR_weight'] == 5.0 else ''
-    print(f"{r['HR_weight']:<12.1f} {r['Macro_F1']:<12.4f} {r['HR_Recall']:<12.4f}{marker}")
+    print(f"{r['HR_weight']:<12.1f} {r['Macro_F1']:<12.4f} {r['HR_Recall']:.4f}{marker}")
 
-df_res = pd.DataFrame(results)
-out_path = os.path.join(PROJECT_DIR, 'ael_sensitivity_results.csv')
-df_res.to_csv(out_path, index=False)
-print(f'\nSaved to {out_path}')
+pd.DataFrame(results).to_csv(
+    os.path.join(PROJECT_DIR, 'ael_sensitivity_results.csv'), index=False
+)
+print('\nSaved: ael_sensitivity_results.csv')
 
-# LaTeX table snippet
-print('\n--- LaTeX table rows ---')
+print('\n--- LaTeX rows (paste to paper) ---')
 for r in results:
-    marker = r'$\dagger$' if r['HR_weight'] == 5.0 else ''
-    print(f"AEL [1.0, 3.5, 3.0, {r['HR_weight']:.1f}]{marker} & {r['Macro_F1']:.4f} & {r['HR_Recall']:.4f} \\\\")
+    star = r' \textbf{(ours)}' if r['HR_weight'] == 5.0 else ''
+    print(f"AEL $[1.0,3.5,3.0,{r['HR_weight']:.1f}]${star} "
+          f"& {r['Macro_F1']:.4f} & {r['HR_Recall']:.4f} \\\\")
