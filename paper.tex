@@ -175,6 +175,24 @@ validated clinical deployment.
 \label{sec:methods}
 %% ============================================================================
 
+Figure~\ref{fig:framework} provides an overview of the proposed pipeline,
+from raw endoscopy image input through CLAHE preprocessing, three
+parallel lightweight architectures trained under AEL, Monte Carlo Dropout
+uncertainty quantification, and final four-class risk output with
+GradCAM explainability.
+
+\begin{figure*}[!ht]
+  \centering
+  \includegraphics[width=\textwidth]{framework.png}
+  \caption{Overview of the proposed GI endoscopy risk stratification
+    framework. Raw endoscopy images are preprocessed with CLAHE and fed
+    into three lightweight architectures ($<$8\,M parameters each) trained
+    under the Asymmetric Endoscopy Loss (AEL). Monte Carlo Dropout
+    uncertainty quantification governs the referral protocol, and GradCAM
+    heatmaps provide per-class explainability for clinical audit.}
+  \label{fig:framework}
+\end{figure*}
+
 \subsection{Datasets}
 \label{sec:datasets}
 
