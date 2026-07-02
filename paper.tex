@@ -319,18 +319,6 @@ four tiers.
 \end{tabular}}
 \end{table*}
 
-\begin{figure*}[!ht]
-  \centering
-  \includegraphics[width=\linewidth]{imbalance_handling.png}
-  \caption{Three-stage class imbalance handling strategy. \textbf{Left:}
-    Normal class capped at 3,000 images (raw: 5,252) to reduce dominance.
-    \textbf{Centre:} WeightedRandomSampler balances expected class
-    probability per batch to 25\,\% each. \textbf{Right:} AEL assigns
-    increasing loss penalties (1$\times$--5$\times$) to higher-risk classes,
-    encoding clinical cost asymmetry.}
-  \label{fig:imbalance}
-\end{figure*}
-
 \subsection{Image Preprocessing and Augmentation}
 \label{sec:preproc}
 
@@ -768,14 +756,6 @@ Focal Loss ($\gamma=2$)              & 0.8386        & 0.9474\\
 \bottomrule
 \end{tabular}
 \end{table*}
-
-\begin{figure}[!ht]
-  \centering
-  \includegraphics[width=\linewidth]{ablation_study.png}
-  \caption{AEL ablation bar chart. Macro F1 and High-Risk Recall for
-    DenseNet-121 trained under three loss functions (10 epochs each).}
-  \label{fig:ablation}
-\end{figure}
 
 AEL achieves the highest macro F1 (0.8432 vs.\ 0.8386 for Focal Loss and
 0.8367 for cross-entropy), confirming that asymmetric class weighting
