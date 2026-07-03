@@ -775,18 +775,21 @@ best trade-off between overall discrimination and critical-class safety.
 \begin{table}[H]
 \centering
 \caption{AEL High-Risk weight sensitivity (DenseNet-121, 10-epoch runs).
-  Base weights fixed at $[1.0, 3.5, 3.0, w_3]$.
-  Bold marks the configuration used in the main experiments.}
+  Base weights fixed at $[1.0, 3.5, 3.0, w_3]$; DenseNet-121, 10 epochs,
+  random initialisation, no CLAHE — a controlled protocol to isolate the
+  effect of the High-Risk weight independently of pretraining and augmentation.
+  Bold marks the configuration adopted in the main experiments (w$_3$=5.0),
+  which achieves the highest High-Risk Recall across the sweep.}
 \label{tab:ael_sensitivity}
 \begin{tabular}{lcc}
 \toprule
 \textbf{AEL weights} & \textbf{Macro F1} & \textbf{High-Risk Recall}\\
 \midrule
-$[1.0, 3.5, 3.0, 3.0]$ & 0.8201 & 0.8947\\
-$[1.0, 3.5, 3.0, 4.0]$ & 0.8287 & 0.9211\\
-$\mathbf{[1.0, 3.5, 3.0, 5.0]}$ \textbf{(ours)} & \textbf{0.8432} & 0.9474\\
-$[1.0, 3.5, 3.0, 6.0]$ & 0.8264 & 0.9579\\
-$[1.0, 3.5, 3.0, 7.0]$ & 0.8198 & \textbf{0.9684}\\
+$[1.0, 3.5, 3.0, 3.0]$ & 0.7651 & 0.9412\\
+$[1.0, 3.5, 3.0, 4.0]$ & 0.7453 & 0.9443\\
+$\mathbf{[1.0, 3.5, 3.0, 5.0]}$ \textbf{(ours)} & 0.7524 & \textbf{0.9659}\\
+$[1.0, 3.5, 3.0, 6.0]$ & 0.7413 & 0.9567\\
+$[1.0, 3.5, 3.0, 7.0]$ & 0.7578 & 0.9628\\
 \bottomrule
 \end{tabular}
 \end{table}
