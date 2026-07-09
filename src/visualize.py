@@ -118,7 +118,7 @@ def plot_imbalance_handling():
     axes[1].set(xticks=x, xticklabels=labels, ylabel='Fraction per Batch', title='② WeightedRandomSampler')
     axes[1].tick_params(axis='x', rotation=12); axes[1].legend(fontsize=7); axes[1].grid(axis='y', alpha=0.3)
 
-    ael  = [1.0, 2.0, 3.0, 5.0]
+    ael  = [1.0, 3.5, 3.0, 5.0]
     bars = axes[2].bar(labels, ael, color=colors, alpha=0.9, edgecolor='black')
     for bar, val in zip(bars, ael):
         axes[2].text(bar.get_x() + bar.get_width()/2, val + 0.06,

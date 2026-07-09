@@ -1,4 +1,4 @@
-# Beyond Binary: Four-Class Risk Stratification from Gastrointestinal Endoscopy Using Asymmetric-Cost Lightweight CNN–Transformer Learning and Demographic Equity Analysis
+# Beyond Binary: Four-Class Risk Stratification from Gastrointestinal Endoscopy Using Asymmetric-Cost Lightweight CNN–Transformer Learning
 
 **Author:** Azizur Rahman  
 **Affiliation:** Indiana Wesleyan University · RadTH Technologies  
@@ -36,7 +36,6 @@ This work presents the **first CNN-vs-Transformer benchmark for four-class GI le
 6. **MC Dropout uncertainty** — T=30 stochastic passes; τ=0.75 confidence threshold flags Pre-malignant/High-Risk for mandatory endoscopist review
 7. **AEL ablation** — AEL vs. Cross-Entropy vs. Focal Loss (γ=2) on DenseNet-121
 8. **Endoscopist workload simulation** — quantifies AI burden reduction with zero missed High-Risk cases
-9. **CD-CTEI fairness framework** — proof-of-concept equity audit across demographic subgroups; scaffold for studies with real patient annotations
 
 ---
 
@@ -109,7 +108,6 @@ GastroEndoscopy-Risk-Stratification/
 │   ├── uncertainty.py                       # mc_predict (MC Dropout, T=30)
 │   ├── explainability.py                    # GradCAM, get_target_layer, visualize_gradcam
 │   ├── workload.py                          # endoscopist_simulation
-│   ├── equity.py                            # compute_cdctei, equity_analysis
 │   ├── ablation.py                          # run_ablation (AEL vs CE vs Focal)
 │   └── visualize.py                         # All plot functions
 │
@@ -203,8 +201,7 @@ Training is **crash-safe**: re-running any training cell or `main.py` resumes fr
 | 10 | GradCAM explainability |
 | 11 | Monte Carlo Dropout uncertainty |
 | 12 | Endoscopist workload simulation |
-| 13 | Demographic equity (CD-CTEI) |
-| 14 | Results summary and paper tables |
+| 13 | Results summary and paper tables |
 
 ---
 
@@ -213,8 +210,7 @@ Training is **crash-safe**: re-running any training cell or `main.py` resumes fr
 ```bibtex
 @article{rahman2026gastrisk,
   title   = {Beyond Binary: Four-Class Risk Stratification from Gastrointestinal
-             Endoscopy Using Asymmetric-Cost Lightweight CNN--Transformer Learning
-             and Demographic Equity Analysis},
+             Endoscopy Using Asymmetric-Cost Lightweight CNN--Transformer Learning},
   author  = {Rahman, Azizur},
   journal = {Medical \& Biological Engineering \& Computing},
   year    = {2026},
