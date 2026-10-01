@@ -1,0 +1,13 @@
+model,class,class_name,ece
+densenet121,0,Normal,0.1414
+densenet121,1,Inflammatory,0.2108
+densenet121,2,Pre-malignant,0.1932
+densenet121,3,High-Risk,0.3223
+efficientnet_b0,0,Normal,0.2304
+efficientnet_b0,1,Inflammatory,0.2334
+efficientnet_b0,2,Pre-malignant,0.1955
+efficientnet_b0,3,High-Risk,0.1184
+deit_tiny,0,Normal,0.1082
+deit_tiny,1,Inflammatory,0.2239
+deit_tiny,2,Pre-malignant,0.2497
+deit_tiny,3,High-Risk,0.3572

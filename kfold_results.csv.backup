@@ -1,0 +1,6 @@
+Unnamed: 0,model,fold,macro_f1,macro_auc,hr_recall
+,densenet121,1.0,0.141,,0.0
+,densenet121,2.0,0.141,,0.0
+,densenet121,3.0,0.141,,0.0
+,densenet121,4.0,0.1411,,0.0
+,densenet121,5.0,0.1411,,0.0

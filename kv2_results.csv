@@ -1,0 +1,4 @@
+model,hk_macro_f1,kv2_macro_f1,f1_drop,kv2_hr_recall
+densenet121,0.841944,0.740275,0.101669,0.9715
+efficientnet_b0,0.839031,0.774904,0.064127,0.9945
+deit_tiny,0.81064,0.764363,0.046277,0.996

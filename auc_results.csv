@@ -1,0 +1,4 @@
+model,auc_normal,auc_inflammatory,auc_premalignant,auc_highrisk,macro_auc
+densenet121,0.991332,0.936187,0.967473,0.997175,0.973042
+efficientnet_b0,0.991858,0.923438,0.972013,0.996162,0.970868
+deit_tiny,0.991364,0.921333,0.962253,0.99855,0.968375

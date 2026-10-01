@@ -1,0 +1,4 @@
+model_A,model_B,b,c,chi2,p_value,result
+densenet121,efficientnet_b0,39,41,0.0125,0.910979,Not significant
+densenet121,deit_tiny,56,38,3.0745,0.079531,Not significant
+efficientnet_b0,deit_tiny,50,30,4.5125,0.033648,Significant (p<0.05)

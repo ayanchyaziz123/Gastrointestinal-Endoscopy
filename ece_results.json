@@ -1,5 +1,5 @@
 {
-  "densenet121": 0.014909,
-  "efficientnet_b0": 0.025942,
-  "deit_tiny": 0.031403
+  "densenet121": 0.069016,
+  "efficientnet_b0": 0.074378,
+  "deit_tiny": 0.089887
 }

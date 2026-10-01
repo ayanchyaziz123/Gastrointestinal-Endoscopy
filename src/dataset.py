@@ -119,6 +119,7 @@ def load_hyperkvasir(data_dir: str, max_normal: int = 3000) -> pd.DataFrame:
     normal_paths, other_rows, skipped = [], [], []
 
     for root, dirs, files in os.walk(base_dir):
+        dirs.sort()   # alphabetical traversal — identical on Mac, Windows, Linux
         depth = root.replace(base_dir, '').count(os.sep)
         if depth != 3:
             continue
@@ -129,7 +130,7 @@ def load_hyperkvasir(data_dir: str, max_normal: int = 3000) -> pd.DataFrame:
         if label is None:
             skipped.append(class_folder)
             continue
-        imgs = [os.path.join(root, f) for f in files
+        imgs = [os.path.join(root, f) for f in sorted(files)
                 if f.lower().endswith(('.jpg', '.jpeg', '.png', '.bmp'))]
         for path in imgs:
             row = {'image_path': path, 'label': label,
@@ -162,14 +163,14 @@ def load_kvasir_v2(data_dir: str) -> pd.DataFrame:
     if not os.path.exists(data_dir):
         print(f'[!] Kvasir-v2 not found at {data_dir}')
         return pd.DataFrame()
-    for class_folder in os.listdir(data_dir):
+    for class_folder in sorted(os.listdir(data_dir)):
         class_dir = os.path.join(data_dir, class_folder)
         if not os.path.isdir(class_dir):
             continue
         label = KVASIR_V2_MAP.get(class_folder)
         if label is None:
             continue
-        for f in os.listdir(class_dir):
+        for f in sorted(os.listdir(class_dir)):
             if not f.lower().endswith(('.jpg', '.jpeg', '.png')):
                 continue
             rows.append({'image_path': os.path.join(class_dir, f),
@@ -183,6 +184,8 @@ def load_kvasir_v2(data_dir: str) -> pd.DataFrame:
 
 
 def split_dataset(df, seed=SEED):
+    # Sort by path first so the split is identical regardless of OS file-listing order
+    df = df.sort_values('image_path').reset_index(drop=True)
     train_df, temp   = train_test_split(df, test_size=0.3, stratify=df['label'], random_state=seed)
     val_df, test_df  = train_test_split(temp, test_size=0.5, stratify=temp['label'], random_state=seed)
     print(f'Split: train={len(train_df)}  val={len(val_df)}  test={len(test_df)}')

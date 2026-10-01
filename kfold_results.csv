@@ -1,0 +1,16 @@
+model,fold,macro_f1,macro_auc,hr_recall
+densenet121,1,0.8407,0.974,0.9581
+densenet121,2,0.8568,0.9771,0.9559
+densenet121,3,0.8422,0.9727,0.9536
+densenet121,4,0.8508,0.9704,0.9698
+densenet121,5,0.8522,0.9798,0.9535
+efficientnet_b0,1,0.8319,0.9631,0.9465
+efficientnet_b0,2,0.8263,0.9635,0.9606
+efficientnet_b0,3,0.8391,0.973,0.9513
+efficientnet_b0,4,0.8406,0.9671,0.9535
+efficientnet_b0,5,0.8428,0.9716,0.9465
+deit_tiny,1,0.8068,0.9642,0.9488
+deit_tiny,2,0.8067,0.9698,0.9675
+deit_tiny,3,0.8309,0.968,0.9466
+deit_tiny,4,0.83,0.9739,0.9651
+deit_tiny,5,0.8507,0.9731,0.9465

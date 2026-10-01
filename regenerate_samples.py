@@ -59,12 +59,12 @@ def make_figure(class_images, title, out_path):
     n_classes = len(LABEL_NAMES)
 
     # Layout: label column + 4 image columns
-    fig = plt.figure(figsize=(N_PER_CLASS * 2.8 + 1.4, n_classes * 2.8))
+    fig = plt.figure(figsize=(N_PER_CLASS * 2.8 + 2.2, n_classes * 2.8))
     fig.suptitle(title, fontsize=13, fontweight='bold', y=1.01)
 
     gs = fig.add_gridspec(
         n_classes, N_PER_CLASS + 1,
-        width_ratios=[0.38] + [1] * N_PER_CLASS,
+        width_ratios=[0.65] + [1] * N_PER_CLASS,
         hspace=0.06, wspace=0.04,
         top=0.96, bottom=0.02, left=0.02, right=0.98
     )
@@ -76,7 +76,7 @@ def make_figure(class_images, title, out_path):
         ax_lbl.text(
             0.5, 0.5, LABEL_NAMES[cls],
             ha='center', va='center',
-            fontsize=10, fontweight='bold', color='white',
+            fontsize=18, fontweight='bold', color='white',
             rotation=90, transform=ax_lbl.transAxes
         )
         ax_lbl.set_xticks([])

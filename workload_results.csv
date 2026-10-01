@@ -1,0 +1,2 @@
+model,total,auto_cleared,flagged,missed_high_risk,pct_auto_cleared,pct_flagged,threshold,mc_passes
+densenet121,1145,494,651,0,43.1,56.9,0.75,30

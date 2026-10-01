@@ -111,10 +111,10 @@ ax.axhline(0.39, xmin=0.05, xmax=0.95, color='#BDC3C7', linewidth=0.4)
 ROW4_Y = 0.30
 
 results = [
-    ('Macro F1', '0.83', '#2980B9'),
+    ('Macro F1', '0.84', '#2980B9'),
     ('Zero\nMissed HR', '✓', '#27AE60'),
-    ('Workload\nReduction', '44 %', '#8E44AD'),
-    ('ECE', '<0.035', '#16A085'),
+    ('Workload\nReduction', '44.9%', '#8E44AD'),
+    ('ECE', '0.08–0.09', '#16A085'),
 ]
 for i, (metric, val, col) in enumerate(results):
     x = 0.12 + i * 0.255
@@ -129,7 +129,7 @@ ax.text(0.5, 0.17,
         'MC Dropout (T=30, τ=0.75)  +  GradCAM Explainability',
         ha='center', va='center', fontsize=FS_SMALL, color='#555555')
 ax.text(0.5, 0.11,
-        'Cross-dataset zero-shot: Kvasir-v2  |  Macro F1 = 0.76',
+        'Cross-dataset zero-shot: Kvasir-v2  |  Macro F1 = 0.78',
         ha='center', va='center', fontsize=FS_SMALL, color='#555555')
 
 ax.axhline(0.07, xmin=0.05, xmax=0.95, color='#BDC3C7', linewidth=0.3)

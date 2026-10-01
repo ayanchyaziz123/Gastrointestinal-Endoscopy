@@ -127,7 +127,7 @@ arrow(ax, 8.8, 5.5, 8.8, 4.05)
 
 # ── Auto-clear / escalate note ────────────────────────────────────────────────
 box(ax, 12.1, 3.2, 5.65, 0.85,
-    'Auto-clear 43.9% low-confidence cases  |  Zero missed High-Risk lesions',
+    'Auto-clear 44.9% low-confidence cases  |  Zero missed High-Risk lesions',
     color='#E8F5E9', fontsize=8.5, radius=0.15)
 
 arrow(ax, 14.9, 5.5, 14.9, 4.05)

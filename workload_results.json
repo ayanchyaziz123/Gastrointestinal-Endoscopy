@@ -1,0 +1,11 @@
+{
+  "model": "densenet121",
+  "total": 1145,
+  "auto_cleared": 494,
+  "flagged": 651,
+  "missed_high_risk": 0,
+  "pct_auto_cleared": 43.1,
+  "pct_flagged": 56.9,
+  "threshold": 0.75,
+  "mc_passes": 30
+}

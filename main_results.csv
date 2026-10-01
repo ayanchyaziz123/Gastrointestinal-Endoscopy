@@ -1,0 +1,4 @@
+model,macro_f1,high_risk_recall,normal_f1,inflammatory_f1,premalignant_f1,highrisk_f1
+densenet121,0.841944,0.965944,0.95174,0.57732,0.862191,0.976526
+efficientnet_b0,0.839031,0.965944,0.950712,0.563536,0.86535,0.976526
+deit_tiny,0.81064,0.950464,0.947836,0.494382,0.831889,0.968454
